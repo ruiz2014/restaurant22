@@ -1,0 +1,43 @@
+.navbar{
+    background: #c8bdab !important;
+}
+.navbar img{
+    width: 170px;
+}
+.form-label-2{color: #605c5c;}
+.form-control-2 {
+    display: block;
+    width: 100%;
+    padding: 0rem .75rem;
+    font-size: 1rem;
+    line-height: 1.5;
+    color: #495057;
+    background-color: #fff;
+    background-clip: padding-box;
+    border:none;
+    border-bottom: 1px solid #ced4da;
+    outline: none;
+    transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
+}
+
+.form-control-2::placeholder{
+  color:rgb(219, 221, 224);
+}
+
+.form-group input.line , select.line , textarea.line{
+    border-bottom: 1px solid #888 !important;
+    background: transparent !important;
+    border: 0;
+    /* outline: none; */
+  }
+  input.line:focus,
+  select.line:focus,
+  textarea.line:focus{
+    outline:none !important;
+    outline-offset: 0;
+    box-shadow: none;
+  }
+  input.line:active{
+    outline:none !important;
+    outline-offset: 0 !important;
+  }
