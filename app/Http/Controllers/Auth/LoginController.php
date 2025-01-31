@@ -16,6 +16,7 @@ use App\Models\User;
 class LoginController extends Controller
 {
     public function login(LoginRequest $req){
+        // dd("llego a loggin");
         $email = $req->email;
         $pass = $req->password;
 
@@ -25,13 +26,31 @@ class LoginController extends Controller
             if(Hash::check($pass, $user->password2)){
                 Auth::login($user);
                 $req->session()->regenerate();
-                return redirect('admin')->with('status', 'You are loggead');
+                switch (Auth::user()->rol) {
+                    case 1:
+                        return redirect()->route('home');
+                    case 2:
+                        return redirect()->route('home');
+                    default:
+                        return redirect()->route('hall');
+                }
+                // return redirect('salon')->with('status', 'You are loggead');
             }
         }
         
         if(Auth::attempt(['email' => $email, 'password' => $pass])){
             $req->session()->regenerate();
-            return redirect('admin')->intended()->with('status', 'You are loggead');
+
+            switch (Auth::user()->rol) {
+                case 1:
+                    return redirect()->route('home');
+                case 2:
+                    return redirect()->route('home');
+                default:
+                    return redirect()->route('hall');
+            }
+            // return redirect()->intended('salon')->with('status', 'You are loggead');
+            // return redirect('salon')->with('status', 'You are loggead');
 
             // redirect()->intended()->with()
         }

@@ -73,6 +73,14 @@
                 margin:25px 50px 0px;
             }
         }
+
+        @media only screen and (max-width: 991px) {
+            .dropdown-menu-end{
+                left:0px !important;
+                width:300px;
+            }
+        }
+
         @media only screen and (max-width: 900px) {
             .mesa1{
                 width:20%;
@@ -150,6 +158,17 @@
                     <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
                     <button class="btn btn-outline-success" type="submit">Search</button>
                 </form>
+                <li class="nav-item dropdown">
+                    <a class="btn btn-outline-success rounded-circle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        D
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end shadow position-absolute profile" aria-labelledby="navbarDropdown">
+                        <li><a class="dropdown-item" href="#">Action</a></li>
+                        <li><a class="dropdown-item" href="#">Another action</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="#">Something else here</a></li>
+                    </ul>
+                </li>
             </div>
         </div>
     </nav>
@@ -185,6 +204,11 @@
     <div class="tab-content wrapper-tabs" id="myTabContent" style="">
         @foreach($rooms as $room)
         <div class="tab-pane fade {{ $room->id == 1 ? 'show active':'' }}" id="{{ preg_replace('/\s+/', '', $room->name)}}" role="tabpanel" aria-labelledby="{{ preg_replace('/\s+/', '', $room->name)}}-tab">
+            <h4 class="text-capitalize text-center mb-3">{{ $room->name }}</h4>
+            <!-- <h3 class="display-8 text-capitalize">{{ $room->name }}</h3>
+            <p class="lead">
+                This is a lead paragraph. It stands out from regular paragraphs.
+            </p> -->
             <div class="mierda"> 
                 @foreach($tables as $table) 
                 @if($room->id == $table->room_id)

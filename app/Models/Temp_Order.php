@@ -16,4 +16,9 @@ class Temp_Order extends Model
     {
         return $this->hasOne('App\Models\Room\Table', 'id', 'table_id');
     }
+
+    public function product()
+    {
+        return $this->hasOne('App\Models\Product', 'id', 'order_id');
+    }
 }

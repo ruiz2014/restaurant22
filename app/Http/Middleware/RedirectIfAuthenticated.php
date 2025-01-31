@@ -17,11 +17,23 @@ class RedirectIfAuthenticated
      */
     public function handle(Request $request, Closure $next, string ...$guards): Response
     {
+        // dd($guards, $request, $next);
         $guards = empty($guards) ? [null] : $guards;
 
         foreach ($guards as $guard) {
             if (Auth::guard($guard)->check()) {
-                return redirect(RouteServiceProvider::HOME);
+                // dd(Auth::user()->rol);
+                switch (Auth::user()->rol) {
+                    case 1:
+                        return redirect()->route('home');
+                    case 2:
+                        return redirect()->route('home');
+                    default:
+                        return redirect()->route('hall');
+                }
+
+                // dd($guards, $request, $guard, Auth::guard($guard)->check(), Auth::user()->rol);
+                // return redirect(RouteServiceProvider::HOME);
             }
         }
 

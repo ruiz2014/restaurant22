@@ -50,6 +50,7 @@ class PaymentBoxController extends Controller
 
     public function show(Request $request, $order){
         // dd($order);
+/*+++++ERROR DE RUTAS SE PUEDE IR A TEMP ATTEMCION SE DEBE CORREGIR PARA NO MOSTRAR NADA ++++++*/
         $attentions = Temp_Order::join('products as p', 'p.id', '=', 'temp_orders.order_id')
                     ->where('temp_orders.status', 4)
                     ->where('temp_orders.code', $order)
@@ -93,13 +94,15 @@ class PaymentBoxController extends Controller
             });
 
             if(count($filteredArray) !== count($request->input('payMethod'))){
+               // dd($total, $total_provi, $filteredArray, $request->input('payMethod'), array_combine($request->input('payMethod'), $filteredArray), $request, count($filteredArray), count($request->input('payMethod')));
                 return redirect()->route('pay.show', ['order'=> $request->code])->with('danger', 'Elegio formas de pagos que no coninciden con monto total');
             }
     
-            $total_provi = array_sum($filteredArray);
+            $total_provi = (float)array_sum($filteredArray);
             $total = Temp_Order::select(DB::raw('SUM(price * amount) as total'))->where('code', $request->code)->value('total');
             
             if($total !== $total_provi){
+                //dd($total, $total_provi, $filteredArray, $request->input('payMethod'), array_combine($request->input('payMethod'), $filteredArray), $request, count($filteredArray), count($request->input('payMethod')));
                 return redirect()->route('pay.show', ['order'=> $request->code])->with('danger', 'Elegio formas de pagos que no coninciden con monto total');
             }
 
@@ -136,24 +139,36 @@ class PaymentBoxController extends Controller
                     ]);
                 }
 
-                $resp = null;
+                $respo = null;
+                $voucher = '';
                 // dd($request->receipt);
                 switch($request->receipt){
                     case '03' :
                             $respo = $this->boleta($request->code);
-                            if($respo['success'])
-                                return redirect()->route('pay.index')->with($respo['alert'], 'Boleta '.$respo['nameId'].' '.$respo['message']);  
-                            else
-                                return redirect()->route('pay.index')->with($respo['alert'], $respo['message']); 
-                            break;
+                            $voucher = 'Boleta';
+                            // if($respo['success'])
+                            //     return redirect()->route('pay.generated', ['order'=>$respo['attentionId']])->with($respo['alert'], 'Boleta '.$respo['nameId'].' '.$respo['message']);  
+                            // else
+                            //     return redirect()->route('pay.index')->with($respo['alert'], $respo['message']); 
+                            // break;
                     case '01' :
                             $respo = $this->facturacion($request->code);
-                            return redirect()->route('pay.index')->with($respo['alert'], $respo['message']);   
-                        break; 
+                            $voucher = 'Factura';
+                            // if($respo['success'])
+                            //     return redirect()->route('pay.generated', ['order'=>$respo['attentionId']])->with($respo['alert'], 'Factura '.$respo['nameId'].' '.$respo['message']); 
+                            // else
+                            //     return redirect()->route('pay.index')->with($respo['alert'], $respo['message']);   
+                            // break; 
                     default :
                             $respo = $this->ticket($request->code);
-                            return redirect()->route('pay.index')->with($respo['alert'], $respo['message']);        
+                            $voucher = 'Ticket';
+                            // return redirect()->route('pay.index')->with($respo['alert'], $respo['message']);        
                 }
+
+                if($respo['success'])
+                    return redirect()->route('pay.generated', ['order'=>$respo['attentionId']])->with($respo['alert'], $voucher.' '.$respo['nameId'].' '.$respo['message']);  
+                else
+                    return redirect()->route('pay.index')->with($respo['alert'], $respo['message']); 
             }
 
             // $customer_id';
@@ -198,7 +213,8 @@ class PaymentBoxController extends Controller
             'success' => false,
             'alert' => 'danger',
             'message' => 'No se encontro ninguna orden ',
-            'nameId' => ''
+            'nameId' => '',
+            'attentionId' => null, 
         ];
 
         if (Attention::where('document_code', $order)->exists()) {
@@ -308,7 +324,8 @@ class PaymentBoxController extends Controller
                     'success' => true,
                     'alert' => 'success',
                     'message' => $mensaje,
-                    'nameId' => $xml
+                    'nameId' => $xml,
+                    'attentionId' => $attentionData->id
                 ];
                 
                 return $response; 
@@ -349,7 +366,8 @@ class PaymentBoxController extends Controller
                     'alert' => 'danger',
                     'message' => 'No se encontro ninguna orden ',
                     'cdr' => null,
-                    'nameId' => ''
+                    'nameId' => '',
+                    'attentionId' => null
                 ];
 
         if (!Attention::where('document_code', $order)->exists()) {
@@ -545,7 +563,8 @@ class PaymentBoxController extends Controller
                 'alert' => 'success',
                 'message' => $message,
                 'cdr' => $code,
-                'nameId' => $xml
+                'nameId' => $xml,
+                'attentionId' => $attentionData->id
             ];
 
             return $response; 
@@ -571,7 +590,8 @@ class PaymentBoxController extends Controller
             'alert' => 'danger',
             'message' => 'No se encontro ninguna orden ',
             'cdr' => null,
-            'nameId' => ''
+            'nameId' => '',
+            'attentionId' => null
         ];
 
         if (!Attention::where('document_code', $order)->exists()) {
@@ -591,6 +611,8 @@ class PaymentBoxController extends Controller
             $response['success'] = true;
             $response['alert'] = 'success';
             $response['message'] = 'Se genero corectamente el ticket';
+            $response['nameId'] = '';
+            $response['attentionId'] = $attentionData->id;
 
             return $response;
         } catch (\Throwable $th) {
@@ -603,5 +625,19 @@ class PaymentBoxController extends Controller
             
             return $response;
         }
+    }
+
+    public function generatedReceipt(Request $request, $order){
+        $attention = Attention::find($order);
+        $temps = Temp_Order::where('code', $attention->document_code)->get();
+        $methods = PaymentMethod::join('payment_logs as pl', 'payment_methods.id', '=', 'pl.method_id')
+                                ->join('attentions as at', 'pl.attention_id', '=', 'at.id')
+                                ->where('at.document_code', $attention->document_code)
+                                ->select('pl.total', 'payment_methods.name')
+                                ->get();
+                                // dd($methods);                     
+        $payment_methods = PaymentMethod::all();
+        $total = Temp_Order::where('code', $attention->document_code)->sum(DB::raw('amount * price'));
+        return view('cash_register.generated_receipt', compact('attention', 'total', 'payment_methods', 'temps', 'methods'));
     }
 }

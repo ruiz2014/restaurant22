@@ -8,7 +8,9 @@ use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\ProviderController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DiningHallController;
+use App\Http\Controllers\VoucherController;
 use App\Http\Controllers\Kitchen\KitchenController;
+use App\Http\Controllers\Admin\HomeController;
 use App\Http\Controllers\Admin\PaymentBoxController;
 use App\Http\Controllers\Admin\RoomController;
 use App\Http\Controllers\Admin\PaymentMethodController;
@@ -31,21 +33,39 @@ use App\Http\Controllers\Tool\ToolController;
 
 Route::get('/', function () {
     return view('auth.login');
-});
+})->name('login')->middleware('guest');
 
 // Route::view('login', 'auth.login')->middleware('guest');
-// Route::post('/login', [LoginController::class, 'login'])->name('login');
-// Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
+Route::post('/login', [LoginController::class, 'login'])->name('login');
+Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
 // Route::view('inicio', 'inicio')->name('inicio')->middleware('auth');
 // Route::view('admin', 'admin')->name('admin')->middleware('auth');
+Route::get('panel', [HomeController::class, 'index'])->name('home');
+Route::prefix('admin')->group(function () {
+    Route::get('products/list_delete', [ProductController::class, 'listDelete']);
+    Route::post('products/{id}/restore', [ProductController::class, 'restore'])->name('products.restore');
+    Route::resource('products', ProductController::class);
+    Route::resource('customers', CustomerController::class);
+    Route::resource('providers', ProviderController::class);
+    Route::resource('categories', CategoryController::class);
 
-Route::get('products/list_delete', [ProductController::class, 'listDelete']);
-Route::post('products/{id}/restore', [ProductController::class, 'restore'])->name('products.restore');
-Route::resource('products', ProductController::class);
-Route::resource('customers', CustomerController::class);
-Route::resource('providers', ProviderController::class);
-Route::resource('categories', CategoryController::class);
+    Route::get('salas', [RoomController::class, 'index'])->name('room.index');
+    Route::get('salas/create', [RoomController::class, 'create'])->name('room.create');
+    Route::post('salas', [RoomController::class, 'store'])->name('room.store');
+    Route::get('salas/{room}/edit', [RoomController::class, 'edit'])->name('room.edit');
+    Route::post('salas/{room}', [RoomController::class, 'update'])->name('room.update');
+
+    Route::resource('salas', RoomController::class)->parameters(['salas'=>'room'])->names('room');
+    Route::resource('tables', TableController::class);
+    Route::resource('payment_methods', PaymentMethodController::class);
+    Route::resource('vouchers', VoucherController::class);
+
+    Route::get('caja', [PaymentBoxController::class, 'index'])->name('pay.index');
+    Route::get('caja/pago/{order}', [PaymentBoxController::class, 'show'])->name('pay.show');
+    Route::post('caja/pago/enviar', [PaymentBoxController::class, 'store'])->name('pay.store');
+    Route::get('caja/generado/{order}', [PaymentBoxController::class, 'generatedReceipt'])->name('pay.generated');
+});
 
 Route::get('salon', [DiningHallController::class, 'hall'])->name('hall');
 
@@ -59,21 +79,8 @@ Route::post('finalize_order', [DiningHallController::class, 'finalizeOrder'])->n
 
 
 Route::post('dish_ready', [KitchenController::class, 'dishReady']);
-
 Route::get('kitchen', [KitchenController::class, 'index']);
-Route::get('caja', [PaymentBoxController::class, 'index'])->name('pay.index');
-Route::get('caja/pago/{order}', [PaymentBoxController::class, 'show'])->name('pay.show');
-Route::post('caja/pago/enviar', [PaymentBoxController::class, 'store'])->name('pay.store');
 
-Route::get('salas', [RoomController::class, 'index'])->name('room.index');
-Route::get('salas/create', [RoomController::class, 'create'])->name('room.create');
-Route::post('salas', [RoomController::class, 'store'])->name('room.store');
-Route::get('salas/{room}/edit', [RoomController::class, 'edit'])->name('room.edit');
-Route::post('salas/{room}', [RoomController::class, 'update'])->name('room.update');
-
-Route::resource('salas', RoomController::class)->parameters(['salas'=>'room'])->names('room');
-Route::resource('tables', TableController::class);
-Route::resource('payment_methods', PaymentMethodController::class);
 
 /***************************  TOOLS  *****************************/
 Route::get('tool/search', [ToolController::class, 'search']);

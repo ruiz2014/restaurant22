@@ -568,11 +568,11 @@
                     total_pay += parseFloat(document.getElementById(`payMethod_${e.value}`).value);
                 }
             });
-
-          /*  if(parseFloat(total) !== total_pay){
+// console.log(total+ ' ' +total_pay)
+            if(parseFloat(total) !== total_pay){
                 alert("El monto no es igual")
                 return 0;
-            } */
+            } 
 
             generate_receipt();
             // else{
