@@ -1,18 +1,183 @@
-@extends('layouts.app')
-
-@push('styles')
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="css/style.css">
+    <!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous"> -->
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    
+    
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" integrity="sha512-Fo3rlrZj/k7ujTnHg4CGR2D7kSs0v4LLanw2qksYuRlEzO+tcaEPQogQ0KaoGN26/zrn20ImR1DfuLWnOo7aBA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" />
-    <!-- Or for RTL support -->
-    <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.rtl.min.css" /> -->
-@endpush
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" />
+<!-- Or for RTL support -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.rtl.min.css" />
+    
+    <style>
+        /* .mesa{
+            border:solid 1px red;
+        } */
+        /* #tbody td{
+            border:1px solid red;
+        } */
+        #tbody tr{
+            vertical-align:middle;
+            color: #555859eb;
+        }
+        .td-amount{
+            /* border:1px solid red; */
+            width:28%;
+        }
+        .btn-amount{
+            background: none;
+            border: #cacad0 1px solid;
+            font-weight: 700;
+            padding: 6px;
+        }
+        .mierda{
+            display: flex;
+            flex-wrap: wrap;
+            width: 100%;
+        }
+        .mesa1{
+            width:16.6666%;
+        } 
+        img{
+            width:100%;
+        } 
+        .wrapper-mesa{
+            border: solid 1px #a7a7ae;
+            border-radius: 8px; 
+        }
+        .wrapper-mesa:hover{
+            background: rgb(219, 219, 219);
+        }
+        .table-tag{
+            position: absolute;
+            border-radius: 50%;
+            color: white;
+            background: black;
+            width: 30px;
+            height: 30px;
+            line-height: 30px;
+            text-align: center;
+            font-weight: 600;
+        }
+        .wrapper-tabs{
+            margin:50px 100px 0px
+        }
+        @media only screen and (max-width: 1024px) {
+            /* .mesa1{
+                width:20%;
+            }  */
+            .wrapper-tabs{
+                margin:25px 50px 0px;
+            }
+        }
 
-@section('template_title')
-    Products
-@endsection
+        @media only screen and (max-width: 991px) {
+            .dropdown-menu-end{
+                left:0px !important;
+                width:300px;
+            }
+        }
 
-@section('content')
+        @media only screen and (max-width: 900px) {
+            .mesa1{
+                width:20%;
+            } 
+            .wrapper-tabs{
+                margin:25px 50px 0px;
+            }
+        }
+        @media only screen and (max-width: 640px) {
+            .mesa1{
+                width:25%;
+            } 
+            .wrapper-tabs{
+                margin:25px 0px 0px;
+            }
+        }
+        @media only screen and (max-width: 576px) {
+            .td-amount{
+                width:26%;
+            }
+            #tbody td{
+                padding:0 !important;
+            }
+        }
+        @media only screen and (max-width: 478px) {
+            .td-amount{
+                width:29%;
+            } 
+        }
+        @media only screen and (max-width: 436px) {
+            .td-amount{
+                width:32%;
+            } 
+        }
+        @media only screen and (max-width: 390px) {
+            .td-amount{
+                width:39%;
+            } 
+        }
+    </style>
+</head>
+<body>
+
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">Navbar</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="#">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Link</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Dropdown
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <li><a class="dropdown-item" href="#">Action</a></li>
+                            <li><a class="dropdown-item" href="#">Another action</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="#">Something else here</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a>
+                    </li>
+                </ul>
+                <!-- <form class="d-flex">
+                    <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+                    <button class="btn btn-outline-success" type="submit">Search</button>
+                </form> -->
+                <ul class="navbar-nav mb-2 mb-lg-0">
+                <li class="nav-item dropdown">
+                    <a class="btn btn-outline-success rounded-circle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        D
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end shadow position-absolute profile" aria-labelledby="navbarDropdown">
+                        <li><a class="dropdown-item" href="#">Action</a></li>
+                        <li><a class="dropdown-item" href="#">Another action</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="#">Something else here</a></li>
+                    </ul>
+                </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
 
         @if ($message = Session::get('success'))
             <div class="alert alert-success m-4" role="alert">
@@ -27,19 +192,31 @@
         @endif
 
 
+
+
     <ul class="nav nav-tabs wrapper-tabs" id="myTab" role="tablist" style="">
         @foreach($rooms as $room)
         <li class="nav-item" role="presentation">
             <button class="nav-link {{ $room->id == 1 ? 'active':'' }}" id="{{ preg_replace('/\s+/', '', $room->name)}}-tab" data-bs-toggle="tab" data-bs-target="#{{ preg_replace('/\s+/', '', $room->name)}}" type="button" role="tab" aria-controls="{{ preg_replace('/\s+/', '', $room->name)}}" aria-selected="true">{{ $room->name }}</button>
         </li>
         @endforeach
+        <!-- <li class="nav-item" role="presentation">
+            <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile" type="button" role="tab" aria-controls="profile" aria-selected="false">Profile</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="contact-tab" data-bs-toggle="tab" data-bs-target="#contact" type="button" role="tab" aria-controls="contact" aria-selected="false">Contact</button>
+        </li> -->
     </ul>
     <div class="tab-content wrapper-tabs" id="myTabContent" style="">
         @foreach($rooms as $room)
         <div class="tab-pane fade {{ $room->id == 1 ? 'show active':'' }}" id="{{ preg_replace('/\s+/', '', $room->name)}}" role="tabpanel" aria-labelledby="{{ preg_replace('/\s+/', '', $room->name)}}-tab">
             <h4 class="text-capitalize text-center mb-3">{{ $room->name }}</h4>
+            <!-- <h3 class="display-8 text-capitalize">{{ $room->name }}</h3>
+            <p class="lead">
+                This is a lead paragraph. It stands out from regular paragraphs.
+            </p> -->
             <div class="mierda"> 
-            @foreach($tables as $table) 
+                @foreach($tables as $table) 
                 @if($room->id == $table->room_id)
                 <div class="col-3 col-lg-2 col-xl-2 mesa1 p-2 p-sm-3">
                     <span class="table-tag">{{ $table->identifier }}</span>
@@ -48,15 +225,46 @@
                     </div>
                 </div> 
                 @endif
-            @endforeach   
+                @endforeach   
             </div>     
         </div>
         @endforeach
+    
+    
+
+        <!-- <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+            <div class="mierda"> 
+            foreach(tables as $table)
+                <div class="col-3 col-lg-2 col-xl-2 mesa p-2 p-sm-3">
+                    <span class="table-tag"> $table->identifier }}</span>
+                    <div class="wrapper-mesa p-2 p-md-4 shadow btnModal" id=" $table->identifier }}">
+                        <img src="img/table.png" alt="">
+                    </div>
+                </div>
+            endforeach
+            </div>
+        </div>
+        <div class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">
+            ...C
+        </div> -->
     </div>
 
     <div class="container">
         <div class="row">
-
+            <!-- foreach($tables as $table)
+            <div class="col-3 col-lg-2 col-xl-2 mesa p-2 p-sm-3">
+                <span class="table-tag"> table }}</span>
+                <div class="wrapper-mesa p-2 p-md-4 shadow btnModal" id="{{ $table }}">
+                    <img src="img/table.png" alt="">
+                </div>
+            </div>
+            endforeach -->
+            <!-- <div class="col-3 col-lg-2 col-xl-2 mesa p-2 p-sm-3">
+                <span class="table-tag">132</span>
+                <div class="wrapper-mesa p-2 p-md-4 shadow btnModal">
+                    <img src="img/table.png" alt="">
+                </div>
+            </div> -->
         </div>
 
         <!-- Modal -->
@@ -71,7 +279,7 @@
               @csrf
                 <div class="mb-3">
                     <label for="" style="width:100%;">Platillos</label>
-                    <select id="dishe" class="form-select dishes-select" aria-label="Default select example" style="width:100%;">  
+                    <select id="dishe" class="form-select dishes-select" aria-label="Default select example">  
                         <option value="">Seleccione platillo</option>    
                         @foreach($dishes as $id => $dishe)
                         <option value="{{$id}}">{{$dishe}}</option>
@@ -80,7 +288,7 @@
                 </div> 
                 <div class="mb-3">
                     <label for="" style="width:100%;">Bebidas</label>
-                <select id="drink" class="form-select drinks-select" aria-label="Default select example" style="width:100%;">
+                <select id="drink" class="form-select drinks-select" aria-label="Default select example">
                     <option value="">Seleccione bebida</option>     
                     @foreach($drinks as $id => $drink)
                     <option value="{{$id}}">{{$drink}}</option>
@@ -89,7 +297,7 @@
                 </div> 
                 <div class="mb-3">
                     <label for="" style="width:100%;">Guarniciones</label>
-                <select id="fitting" class="form-select fittings-select" aria-label="Default select example" style="width:100%;">
+                <select id="fitting" class="form-select fittings-select" aria-label="Default select example">
                     <option value="">Seleccione guarnision</option>     
                     @foreach($fittings as $id => $fitting)
                     <option value="{{$id}}">{{$fitting}}</option>
@@ -98,7 +306,7 @@
                 </div> 
                 <div class="mb-3">
                     <label for="" style="width:100%;">Otros</label>
-                    <select id="other" class="form-select others-select" aria-label="Default select example" style="width:100%;">
+                    <select id="other" class="form-select others-select" aria-label="Default select example">
                         <option value="">Seleccione otros</option>     
                         @foreach($others as $id => $other)
                         <option value="{{$id}}">{{$other}}</option>
@@ -110,6 +318,8 @@
                     <input type="hidden" name="" id="in_use">
                     <button id="btn-add" class="btn btn-outline-dark">Agregar <ion-icon name="restaurant-outline" style="position:relative;top:3px;left:3px;"></ion-icon></button>
                 </div>
+
+
 
                 <table class="table" style="width: 100%;">
                     <thead class="table-dark">
@@ -145,15 +355,13 @@
           </div>
         </div>
     </div>
-@endsection
-    <!-- <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.0/dist/jquery.slim.min.js"></script> -->
-    <!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script> -->
-    <!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js" integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy" crossorigin="anonymous"></script> -->
-  
 
-@push('scripts')
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.0/dist/jquery.slim.min.js"></script>
+    <!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script> -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js" integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.full.min.js"></script>
     <script src="https://unpkg.com/ionicons@latest/dist/ionicons.js"></script>
+</body>
     <script type="module"> 
         import { io } from "https://cdn.socket.io/4.7.5/socket.io.esm.min.js";
         // const socket = io('https://chapi.nafer.com.pe');
@@ -224,64 +432,65 @@
                 // alert(msg)
         })
         
-    </script> 
+    </script>   
+
     <script>
 
-// let finalizeOrder = document.getElementById('finalize_order');
+        // let finalizeOrder = document.getElementById('finalize_order');
 
-const btn = document.querySelectorAll(".btnModal");
-const modalRegistro = document.querySelector("#exampleModal");
-//las opciones son opcional - puedes quitarlo
-const myModal = new bootstrap.Modal(modalRegistro);
-
-document.addEventListener("DOMContentLoaded", function(e){
-    
-    btn.forEach(mod => {
-        mod.addEventListener("click",function(e){
-            e.preventDefault()
-            $('#send-kitchen').prop('disabled', true);
-            $('#finalize_order').prop('disabled', true);
-            let table = $(this).attr("id");//e.target.getAttribute("id");
-            $('#in_use').val(table);
-            $('#order').val(table);
-            try {
-            $('#tbody').empty();
-            let body = ''
-            var data = { table: table };
-            fetch(`check`, {
-                method: "POST",
-                headers: { 
-                    'Content-Type': 'application/json',
-                    "X-CSRF-Token": document.querySelector('input[name=_token]').value
-                },
-                body: JSON.stringify(data)
-            })
-            .then(response => response.json())
-            .then(datos => {
-                console.log(datos)
-                if(datos.ok){
-                    showResponse(datos['orders']);
-                    if(datos['sign']){
-                        $('#finalize_order').prop('disabled', false);
-                    }
-                }
-                else{
-                    $('#send-kitchen').prop('disabled', true);
-                    console.log(datos)
-                }
-            });
-        } catch (err) {
-            console.log("Error al realizar la petición AJAX: " + err.message);
-        }
-
-            myModal.show();
+        const btn = document.querySelectorAll(".btnModal");
+        const modalRegistro = document.querySelector("#exampleModal");
+        //las opciones son opcional - puedes quitarlo
+        const myModal = new bootstrap.Modal(modalRegistro);
+        
+        document.addEventListener("DOMContentLoaded", function(e){
             
+            btn.forEach(mod => {
+                mod.addEventListener("click",function(e){
+                    e.preventDefault()
+                    $('#send-kitchen').prop('disabled', true);
+                    $('#finalize_order').prop('disabled', true);
+                    let table = $(this).attr("id");//e.target.getAttribute("id");
+                    $('#in_use').val(table);
+                    $('#order').val(table);
+                    try {
+                    $('#tbody').empty();
+                    let body = ''
+                    var data = { table: table };
+                    fetch(`check`, {
+                        method: "POST",
+                        headers: { 
+                            'Content-Type': 'application/json',
+                            "X-CSRF-Token": document.querySelector('input[name=_token]').value
+                        },
+                        body: JSON.stringify(data)
+                    })
+                    .then(response => response.json())
+                    .then(datos => {
+                        console.log(datos)
+                        if(datos.ok){
+                            showResponse(datos['orders']);
+                            if(datos['sign']){
+                                $('#finalize_order').prop('disabled', false);
+                            }
+                        }
+                        else{
+                            $('#send-kitchen').prop('disabled', true);
+                            console.log(datos)
+                        }
+                    });
+                } catch (err) {
+                    console.log("Error al realizar la petición AJAX: " + err.message);
+                }
+
+                    myModal.show();
+                    
+                })
+            })
         })
-    })
-})
-// $('#exampleModal').modal();
-</script>
-<script>
+        // $('#exampleModal').modal();
+    </script>
+    <script>
         let idSelect = null;
         let textSelect = null;
         let priceSelect = null;
@@ -785,7 +994,4 @@ document.addEventListener("DOMContentLoaded", function(e){
                         //      </div>` :'<ion-icon name="hourglass-outline"></ion-icon>' }
 
     </script>
-@endpush
-
-<!-- </body>
-</html> -->
+</html>

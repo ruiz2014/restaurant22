@@ -1,17 +1,15 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <link rel="stylesheet" href="css/style.css">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+@extends('layouts.app')
+
+@section('template_title')
+    Cocina
+@endsection
+
+
+@push('styles')
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" integrity="sha512-Fo3rlrZj/k7ujTnHg4CGR2D7kSs0v4LLanw2qksYuRlEzO+tcaEPQogQ0KaoGN26/zrn20ImR1DfuLWnOo7aBA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" />
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" />
-<!-- Or for RTL support -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.rtl.min.css" />
-<link href=" https://cdn.jsdelivr.net/npm/ionicons@7.4.0/dist/collection/components/icon/icon.min.css " rel="stylesheet">    
+    <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" /> -->
+    <link href=" https://cdn.jsdelivr.net/npm/ionicons@7.4.0/dist/collection/components/icon/icon.min.css " rel="stylesheet"> 
     <style>
         /* .mesa{
             border:solid 1px red;
@@ -47,60 +45,14 @@
             color:#9d9f9f !important;
         }
     </style>
-</head>
-<!-- <body class="" onload="mueveReloj();"> -->
-<body class="" onload="miTime();">
-    <!-- <div class="container">
-        <div class="row">
-            hola
-            <button id="aver">Click</button>
-        </div>
-    </div> -->
+@endpush
 
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="#">Navbar</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                    <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="#">Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Link</a>
-                    </li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            Dropdown
-                        </a>
-                        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                            <li><a class="dropdown-item" href="#">Action</a></li>
-                            <li><a class="dropdown-item" href="#">Another action</a></li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item" href="#">Something else here</a></li>
-                        </ul>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a>
-                    </li>
-                </ul>
-                <form class="d-flex">
-                    <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-                    <button class="btn btn-outline-success" type="submit">Search</button>
-                </form>
-            </div>
-        </div>
-    </nav>
-    <div id="clock" class="clock"> <div>
+<!-- <body class="" onload="miTime();"> -->
+
+
+@section('content')
     <div class="container mt-4">
-        <div id="new-message-notif"></div>
         <div class="row">
-
-        <form name="form_reloj">
-            <input type="text" name="reloj" size="10">
-        </form>
         
             <div class="table-responsive">
                 @csrf
@@ -116,17 +68,15 @@
             
                 <tbody id="message-tbody">
             @foreach($orders as $order)
-                    <tr class="{{ $order->status == 3 ? 'ready' : '' }}">
+                    <tr class="{{ $order->status >= 3 ? 'ready' : '' }}">
                         <td>{{$order->identifier }}</td>
                         <td>{{$order->room }}</td>
                         <td>{{$order->name}}</td>
                         <td>{{$order->amount}}</td>
                         <td>{{$order->note}}</td>
                         <td class="text-center">
-                            <button id="{{$order->id}}" data-status="{{$order->status}} " class="status btn btn-outline-info"><ion-icon name="{{ $order->status == 3 ? 'checkmark-outline' : 'hourglass-outline' }}"></ion-icon></button>
-                            <p class="{{ $order->status == 3 ? '' : 'crono' }}" data-time="{{ $order->created_at }}">
-                                
-                            </p>
+                            <button id="{{$order->id}}" data-status="{{$order->status}} " class="status btn btn-outline-info"><ion-icon name="{{ $order->status >= 3 ? 'checkmark-outline' : 'hourglass-outline' }}"></ion-icon></button>
+                            <p class="{{ $order->status >= 3 ? '' : 'crono' }}" data-time="{{ $order->created_at }}"></p>
                         </td>
                     </tr>
             @endforeach    
@@ -136,10 +86,13 @@
             </div>
         </div>
     </div>
-</body>
 
-<script src="https://cdn.jsdelivr.net/npm/jquery@3.5.0/dist/jquery.slim.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+@endsection
+
+@push('scripts')
+
+<!-- <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.0/dist/jquery.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script> -->
 <script src="https://unpkg.com/ionicons@latest/dist/ionicons.js"></script>
 
 <!-- <script>
@@ -319,3 +272,4 @@
 
 
 </script>           
+@endpush

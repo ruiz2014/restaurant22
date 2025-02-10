@@ -20,8 +20,9 @@ class ProductController extends Controller
     public function index(Request $request): View
     {
         $products = Product::paginate();
+        $deleted = Product::onlyTrashed()->value('id');
 
-        return view('product.index', compact('products'))
+        return view('product.index', compact('products', 'deleted'))
             ->with('i', ($request->input('page', 1) - 1) * $products->perPage());
     }
 
@@ -42,7 +43,7 @@ class ProductController extends Controller
      */
     public function store(ProductRequest $request): RedirectResponse
     {
-        Product::create($request->validated());
+        Product::create($request->validated() + ['status' => 1]);
 
         return Redirect::route('products.index')
             ->with('success', 'Product created successfully.');

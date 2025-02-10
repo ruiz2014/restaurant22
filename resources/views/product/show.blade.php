@@ -56,11 +56,6 @@
                                     <strong>Minimo:</strong>
                                     {{ $product->minimo }}
                                 </div>
-                                <div class="form-group mb-2 mb20">
-                                    <strong>Status:</strong>
-                                    {{ $product->status }}
-                                </div>
-
                     </div>
                 </div>
             </div>

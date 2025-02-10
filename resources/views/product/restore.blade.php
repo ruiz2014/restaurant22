@@ -34,7 +34,6 @@
                                         
 									<th >Name</th>
 									<th >Description</th>
-									<th >Status</th>
                                     <th></th>
                                     </tr>
                                 </thead>
@@ -45,13 +44,11 @@
                                             
 										<td >{{ $product->name }}</td>
 										<td >{{ $product->description }}</td>
-										<td >{{ $product->status }}</td>
-
                                             <td>
                                                 <form action="{{ route('products.restore', $product->id) }}" method="POST">
                                                     @csrf
                                                     <!-- method('DELETE') -->
-                                                    <button type="submit" class="btn btn-danger btn-sm" onclick="event.preventDefault(); confirm('Are you sure to delete?') ? this.closest('form').submit() : false;"><i class="fa fa-fw fa-trash"></i> {{ __('Delete') }}</button>
+                                                    <button type="submit" class="btn btn-outline-success btn-sm" onclick="event.preventDefault(); confirm('Are you sure to restore?') ? this.closest('form').submit() : false;"><i class="fa fa-fw fa-trash"></i> {{ __('Restore') }}</button>
                                                 </form>
                                             </td>
                                         </tr>

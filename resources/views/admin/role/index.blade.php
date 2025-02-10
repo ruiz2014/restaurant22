@@ -1,28 +1,23 @@
 @extends('layouts.app')
 
 @section('template_title')
-    Categories
+    Roles
 @endsection
 
 @section('content')
     <div class="container-fluid">
         <div class="row">
-        @if($deleted)    
-            <div class="col-md-12">
-                <a href="{{ route('categories.deleted') }}" class="btn btn-outline-secondary mb-4">Ver Categorias Eliminadas</a>
-            </div>
-        @endif  
             <div class="col-sm-12">
                 <div class="card">
                     <div class="card-header">
                         <div style="display: flex; justify-content: space-between; align-items: center;">
 
                             <span id="card_title">
-                                {{ __('Categories') }}
+                                {{ __('Roles') }}
                             </span>
 
                              <div class="float-right">
-                                <a href="{{ route('categories.create') }}" class="btn btn-primary btn-sm float-right"  data-placement="left">
+                                <a href="{{ route('roles.create') }}" class="btn btn-primary btn-sm float-right"  data-placement="left">
                                   {{ __('Create New') }}
                                 </a>
                               </div>
@@ -41,21 +36,22 @@
                                     <tr>
                                         <th>No</th>
                                         
-									    <th >Name</th>
+									<th >Name</th>
 
                                         <th></th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach ($categories as $category)
+                                    @foreach ($roles as $role)
                                         <tr>
                                             <td>{{ ++$i }}</td>
                                             
-										<td >{{ $category->name }}</td>
+										<td >{{ $role->name }}</td>
+
                                             <td>
-                                                <form action="{{ route('categories.destroy', $category->id) }}" method="POST">
-                                                    <a class="btn btn-sm btn-primary " href="{{ route('categories.show', $category->id) }}"><i class="fa fa-fw fa-eye"></i> {{ __('Show') }}</a>
-                                                    <a class="btn btn-sm btn-success" href="{{ route('categories.edit', $category->id) }}"><i class="fa fa-fw fa-edit"></i> {{ __('Edit') }}</a>
+                                                <form action="{{ route('roles.destroy', $role->id) }}" method="POST">
+                                                    <a class="btn btn-sm btn-primary " href="{{ route('roles.show', $role->id) }}"><i class="fa fa-fw fa-eye"></i> {{ __('Show') }}</a>
+                                                    <a class="btn btn-sm btn-success" href="{{ route('roles.edit', $role->id) }}"><i class="fa fa-fw fa-edit"></i> {{ __('Edit') }}</a>
                                                     @csrf
                                                     @method('DELETE')
                                                     <button type="submit" class="btn btn-danger btn-sm" onclick="event.preventDefault(); confirm('Are you sure to delete?') ? this.closest('form').submit() : false;"><i class="fa fa-fw fa-trash"></i> {{ __('Delete') }}</button>
@@ -68,7 +64,7 @@
                         </div>
                     </div>
                 </div>
-                {!! $categories->withQueryString()->links() !!}
+                {!! $roles->withQueryString()->links() !!}
             </div>
         </div>
     </div>

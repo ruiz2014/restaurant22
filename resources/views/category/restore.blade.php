@@ -1,17 +1,12 @@
 @extends('layouts.app')
 
 @section('template_title')
-    Categories
+    Products
 @endsection
 
 @section('content')
     <div class="container-fluid">
         <div class="row">
-        @if($deleted)    
-            <div class="col-md-12">
-                <a href="{{ route('categories.deleted') }}" class="btn btn-outline-secondary mb-4">Ver Categorias Eliminadas</a>
-            </div>
-        @endif  
             <div class="col-sm-12">
                 <div class="card">
                     <div class="card-header">
@@ -21,11 +16,7 @@
                                 {{ __('Categories') }}
                             </span>
 
-                             <div class="float-right">
-                                <a href="{{ route('categories.create') }}" class="btn btn-primary btn-sm float-right"  data-placement="left">
-                                  {{ __('Create New') }}
-                                </a>
-                              </div>
+                            
                         </div>
                     </div>
                     @if ($message = Session::get('success'))
@@ -41,24 +32,23 @@
                                     <tr>
                                         <th>No</th>
                                         
-									    <th >Name</th>
-
-                                        <th></th>
+									<th >Name</th>
+									<th >Description</th>
+                                    <th></th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach ($categories as $category)
+                                    @foreach ($categories as $categorie)
                                         <tr>
                                             <td>{{ ++$i }}</td>
                                             
-										<td >{{ $category->name }}</td>
+										<td >{{ $categorie->name }}</td>
+										<td >{{ $categorie->description }}</td>
                                             <td>
-                                                <form action="{{ route('categories.destroy', $category->id) }}" method="POST">
-                                                    <a class="btn btn-sm btn-primary " href="{{ route('categories.show', $category->id) }}"><i class="fa fa-fw fa-eye"></i> {{ __('Show') }}</a>
-                                                    <a class="btn btn-sm btn-success" href="{{ route('categories.edit', $category->id) }}"><i class="fa fa-fw fa-edit"></i> {{ __('Edit') }}</a>
+                                                <form action="{{ route('categories.restore', $categorie->id) }}" method="POST">
                                                     @csrf
-                                                    @method('DELETE')
-                                                    <button type="submit" class="btn btn-danger btn-sm" onclick="event.preventDefault(); confirm('Are you sure to delete?') ? this.closest('form').submit() : false;"><i class="fa fa-fw fa-trash"></i> {{ __('Delete') }}</button>
+                                                    <!-- method('DELETE') -->
+                                                    <button type="submit" class="btn btn-outline-success btn-sm" onclick="event.preventDefault(); confirm('Are you sure to restore?') ? this.closest('form').submit() : false;"><i class="fa fa-fw fa-trash"></i> {{ __('Restore') }}</button>
                                                 </form>
                                             </td>
                                         </tr>

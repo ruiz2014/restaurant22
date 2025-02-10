@@ -35,16 +35,11 @@
                                 <thead class="thead">
                                     <tr>
                                         <th>No</th>
-                                        
-									<th >Name</th>
-									<th >Tipo Doc</th>
-									<th >Document</th>
-									<th >Phone</th>
-									<th >Address</th>
-									<th >Email</th>
-									<th >Ubigeo</th>
-									<th >Status</th>
-
+                                        <th >Name</th>
+                                        <th >Tipo Doc</th>
+                                        <th >Document</th>
+                                        <th >Phone</th>
+                                        <th >Address</th>
                                         <th></th>
                                     </tr>
                                 </thead>
@@ -52,16 +47,11 @@
                                     @foreach ($customers as $customer)
                                         <tr>
                                             <td>{{ ++$i }}</td>
-                                            
-										<td >{{ $customer->name }}</td>
-										<td >{{ $customer->tipo_doc }}</td>
-										<td >{{ $customer->document }}</td>
-										<td >{{ $customer->phone }}</td>
-										<td >{{ $customer->address }}</td>
-										<td >{{ $customer->email }}</td>
-										<td >{{ $customer->ubigeo }}</td>
-										<td >{{ $customer->status }}</td>
-
+                                            <td >{{ $customer->name }}</td>
+                                            <td >{{ $customer->tipo_doc }}</td>
+                                            <td >{{ $customer->document }}</td>
+                                            <td >{{ $customer->phone }}</td>
+                                            <td >{{ $customer->address }}</td>
                                             <td>
                                                 <form action="{{ route('customers.destroy', $customer->id) }}" method="POST">
                                                     <a class="btn btn-sm btn-primary " href="{{ route('customers.show', $customer->id) }}"><i class="fa fa-fw fa-eye"></i> {{ __('Show') }}</a>

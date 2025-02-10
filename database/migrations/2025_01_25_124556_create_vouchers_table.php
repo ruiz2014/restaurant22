@@ -11,14 +11,16 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('vouchers', function (Blueprint $table) {
-            $table->increments('id');
-            $table->unsignedInteger('user_id');
-            $table->string('name', 50);
-            $table->string('sunat_code', 10)->nullable();
-            $table->softDeletes();
-            $table->timestamps();
-        });
+        if(!Schema::hasTable('vouchers')){
+            Schema::create('vouchers', function (Blueprint $table) {
+                $table->increments('id');
+                $table->unsignedInteger('user_id');
+                $table->string('name', 50);
+                $table->string('sunat_code', 10)->nullable();
+                $table->softDeletes();
+                $table->timestamps();
+            });
+        }
     }
 
     /**

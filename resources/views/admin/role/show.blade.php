@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('template_title')
-    {{ $category->name ?? __('Show') . " " . __('Category') }}
+    {{ $role->name ?? __('Show') . " " . __('Role') }}
 @endsection
 
 @section('content')
@@ -11,10 +11,10 @@
                 <div class="card">
                     <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
                         <div class="float-left">
-                            <span class="card-title">{{ __('Show') }} Category</span>
+                            <span class="card-title">{{ __('Show') }} Role</span>
                         </div>
                         <div class="float-right">
-                            <a class="btn btn-primary btn-sm" href="{{ route('categories.index') }}"> {{ __('Back') }}</a>
+                            <a class="btn btn-primary btn-sm" href="{{ route('roles.index') }}"> {{ __('Back') }}</a>
                         </div>
                     </div>
 
@@ -22,7 +22,7 @@
                         
                                 <div class="form-group mb-2 mb20">
                                     <strong>Name:</strong>
-                                    {{ $category->name }}
+                                    {{ $role->name }}
                                 </div>
 
                     </div>

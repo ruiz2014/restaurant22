@@ -10,11 +10,14 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DiningHallController;
 use App\Http\Controllers\VoucherController;
 use App\Http\Controllers\Kitchen\KitchenController;
+use App\Http\Controllers\Admin\RegisterController;
+use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\HomeController;
 use App\Http\Controllers\Admin\PaymentBoxController;
 use App\Http\Controllers\Admin\RoomController;
 use App\Http\Controllers\Admin\PaymentMethodController;
 use App\Http\Controllers\Tool\ToolController;
+use App\Http\Controllers\Biller\AttentionController;
 
 /*
 |--------------------------------------------------------------------------
@@ -43,11 +46,13 @@ Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 // Route::view('admin', 'admin')->name('admin')->middleware('auth');
 Route::get('panel', [HomeController::class, 'index'])->name('home');
 Route::prefix('admin')->group(function () {
-    Route::get('products/list_delete', [ProductController::class, 'listDelete']);
+    Route::get('products/list_delete', [ProductController::class, 'listDelete'])->name('products.deleted');
     Route::post('products/{id}/restore', [ProductController::class, 'restore'])->name('products.restore');
     Route::resource('products', ProductController::class);
     Route::resource('customers', CustomerController::class);
     Route::resource('providers', ProviderController::class);
+    Route::get('categories/list_delete', [CategoryController::class, 'listDelete'])->name('categories.deleted');
+    Route::post('categories/{id}/restore', [CategoryController::class, 'restore'])->name('categories.restore');
     Route::resource('categories', CategoryController::class);
 
     Route::get('salas', [RoomController::class, 'index'])->name('room.index');
@@ -65,6 +70,16 @@ Route::prefix('admin')->group(function () {
     Route::get('caja/pago/{order}', [PaymentBoxController::class, 'show'])->name('pay.show');
     Route::post('caja/pago/enviar', [PaymentBoxController::class, 'store'])->name('pay.store');
     Route::get('caja/generado/{order}', [PaymentBoxController::class, 'generatedReceipt'])->name('pay.generated');
+
+    Route::get('user/register', [RegisterController::class, 'create'])->name('formRegistro');
+    Route::post('user/register', [RegisterController::class, 'store'])->name('register.store');
+    Route::get('user/editPassword/{id}', [RegisterController::class, 'editPassword'])->name('formEdit');
+    Route::post('user/updatePassword/{id}', [RegisterController::class, 'updatePassword'])->name('register.update');
+    Route::resource('users', App\Http\Controllers\Admin\UserController::class);
+
+    Route::resource('roles', RoleController::class);
+    Route::get('attentions/{type}', [AttentionController::class, 'index'])->name('attentions.index');
+    
 });
 
 Route::get('salon', [DiningHallController::class, 'hall'])->name('hall');

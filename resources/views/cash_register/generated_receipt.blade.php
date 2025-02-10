@@ -8,6 +8,16 @@
 
 <div class="container-fluid">
     <div class="row">
+    @if ($message = Session::get('success'))
+        <div class="alert alert-success m-4" role="alert">
+            <p>{{ $message }}</p>
+        </div>
+    @endif
+    @if ($message = Session::get('danger'))
+        <div class="alert alert-danger m-4" role="alert">
+            <p>{{ $message }}</p>
+        </div>
+    @endif
         <div class="col-md-3">
         <div class="panel invoice-list">
         <div class="list-group animate__animated animate__fadeInLeft">
@@ -56,9 +66,9 @@
         <div class="col-md-9">
         <div class="card animate__animated animate__fadeIn">
                 <div class="card-header">
-                    Fecha
-                    <strong>01/01/2018</strong>
-                    <span class="float-right"> <strong>Estado:</strong> Pendiente</span>
+                    Fecha :
+                    <strong>{{ date('d-m-Y', strtotime($attention->created_at))  }}</strong>
+                    <span class="float-end"> <strong>Estado:</strong> Pendiente</span>
 
                 </div>
                 <div class="card-body">
@@ -66,12 +76,11 @@
                         <div class="col-6 col-md-6">
                             <h6 class="mb-2">From:</h6>
                             <div>
-                                <strong>Webz Poland</strong>
+                                <strong>{{ $company->company_name }}</strong>
                             </div>
-                            <div>Madalinskiego 8</div>
-                            <div>71-101 Szczecin, Poland</div>
-                            <div>Email: info@webz.com.pl</div>
-                            <div>Phone: +48 444 666 3333</div>
+                            <div>{{ $company->address }}</div>
+                            <div>Email: {{ $company->company_data->email }}</div>
+                            <div>Phone: {{ $company->company_data->phone }}</div>
                         </div>
 
                         <div class="col-6 col-md-6">

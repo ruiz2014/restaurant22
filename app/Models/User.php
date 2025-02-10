@@ -45,4 +45,14 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+
+    public function employee()
+    {
+        return $this->hasOne('App\Models\Admin\Employee', 'user_id', 'id');
+    }
+
+    public function role()
+    {
+        return $this->hasOne('App\Models\Admin\Role', 'id', 'rol');
+    }
 }

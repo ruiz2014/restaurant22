@@ -61,13 +61,6 @@
             {!! $errors->first('minimo', '<div class="invalid-feedback d-block" role="alert"><strong>:message</strong></div>') !!}
         </div>
     </div>
-    <div class="col-md-6">
-        <div class="form-group mb-4 mb20">
-            <label for="status" class="form-label-2">{{ __('Status') }}</label>
-            <input type="text" name="status" class="form-control-2 @error('status') is-invalid @enderror" value="{{ old('status', $product?->status) }}" id="status" placeholder="Status">
-            {!! $errors->first('status', '<div class="invalid-feedback d-block" role="alert"><strong>:message</strong></div>') !!}
-        </div>
-    </div>
     
     <div class="col-md-12 mt20 mt-2">
         <button type="submit" class="btn btn-primary">{{ __('Submit') }}</button>

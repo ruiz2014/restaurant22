@@ -17,8 +17,9 @@ class CategoryController extends Controller
     public function index(Request $request): View
     {
         $categories = Category::paginate();
+        $deleted = Category::onlyTrashed()->value('id');
 
-        return view('category.index', compact('categories'))
+        return view('category.index', compact('categories', 'deleted'))
             ->with('i', ($request->input('page', 1) - 1) * $categories->perPage());
     }
 
@@ -37,7 +38,7 @@ class CategoryController extends Controller
      */
     public function store(CategoryRequest $request): RedirectResponse
     {
-        Category::create($request->validated());
+        Category::create($request->validated() + ['status' => 1]);
 
         return Redirect::route('categories.index')
             ->with('success', 'Category created successfully.');
@@ -81,5 +82,24 @@ class CategoryController extends Controller
 
         return Redirect::route('categories.index')
             ->with('success', 'Category deleted successfully');
+    }
+
+    public function listDelete(Request $request): View
+    {
+        $categories = Category::onlyTrashed()->paginate();
+
+        return view('category.restore', compact('categories'))
+            ->with('i', ($request->input('page', 1) - 1) * $categories->perPage());
+    }
+
+    public function restore($id): RedirectResponse
+    {
+        // dd($id);
+        $category = Category::onlyTrashed()->find($id);
+        $category->restore();
+
+        return Redirect::route('categories.index')
+            ->with('success', 'Category updated successfully');
+
     }
 }

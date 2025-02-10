@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Temp_Order;
+use App\Models\Admin\Company;
 use App\Models\Biller\PaymentMethod;
 use App\Models\Biller\PaymentLog;
 use App\Models\Biller\Attention;
@@ -119,9 +120,9 @@ class PaymentBoxController extends Controller
                 'document_code'=>$request->code,
                 'reference _document'=>'',
                 'currency'=>1,
-                'product_id'=>0, //$attention->order_id,
-                'amount'=> 0, //$attention->amount,
-                'price'=> 0, //$attention->price,
+                // 'product_id'=>0, //$attention->order_id,
+                // 'amount'=> 0, //$attention->amount,
+                // 'price'=> 0, //$attention->price,
                 'total'=>$total,
                 'seller'=>1,
                 'serie'=>1,
@@ -150,15 +151,16 @@ class PaymentBoxController extends Controller
                             //     return redirect()->route('pay.generated', ['order'=>$respo['attentionId']])->with($respo['alert'], 'Boleta '.$respo['nameId'].' '.$respo['message']);  
                             // else
                             //     return redirect()->route('pay.index')->with($respo['alert'], $respo['message']); 
-                            // break;
+                            break;
                     case '01' :
                             $respo = $this->facturacion($request->code);
+                            // dd($respo);
                             $voucher = 'Factura';
                             // if($respo['success'])
                             //     return redirect()->route('pay.generated', ['order'=>$respo['attentionId']])->with($respo['alert'], 'Factura '.$respo['nameId'].' '.$respo['message']); 
                             // else
                             //     return redirect()->route('pay.index')->with($respo['alert'], $respo['message']);   
-                            // break; 
+                            break; 
                     default :
                             $respo = $this->ticket($request->code);
                             $voucher = 'Ticket';
@@ -566,7 +568,7 @@ class PaymentBoxController extends Controller
                 'nameId' => $xml,
                 'attentionId' => $attentionData->id
             ];
-
+// dd($response, $message, $code);
             return $response; 
             // exit();
         
@@ -629,6 +631,7 @@ class PaymentBoxController extends Controller
 
     public function generatedReceipt(Request $request, $order){
         $attention = Attention::find($order);
+        $company = Company::find(1);
         $temps = Temp_Order::where('code', $attention->document_code)->get();
         $methods = PaymentMethod::join('payment_logs as pl', 'payment_methods.id', '=', 'pl.method_id')
                                 ->join('attentions as at', 'pl.attention_id', '=', 'at.id')
@@ -638,6 +641,6 @@ class PaymentBoxController extends Controller
                                 // dd($methods);                     
         $payment_methods = PaymentMethod::all();
         $total = Temp_Order::where('code', $attention->document_code)->sum(DB::raw('amount * price'));
-        return view('cash_register.generated_receipt', compact('attention', 'total', 'payment_methods', 'temps', 'methods'));
+        return view('cash_register.generated_receipt', compact('company', 'attention', 'total', 'payment_methods', 'temps', 'methods'));
     }
 }
