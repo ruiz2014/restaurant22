@@ -8,6 +8,7 @@ use App\Models\Room\Room;
 use App\Models\Room\Table;
 use Illuminate\Http\Request;
 use DB;
+use PDF;
 
 class DiningHallController extends Controller
 {
@@ -40,7 +41,7 @@ class DiningHallController extends Controller
             $ordersSent = Temp_order::where('code', $check)->where('status', 3)->count();
             $sign = $numberOrders == $ordersSent ? 1 : 0;
 
-            return response()->json(['ok' => 1, 'orders' => $orders, 'sign'=> $sign]);
+            return response()->json(['ok' => 1, 'code'=>$check, 'orders' => $orders, 'sign'=> $sign]);
         }
         // dd($check);
         return response()->json(['ok' => 0, 'error' => "No se Encontro el cliente ...."]);
@@ -123,6 +124,18 @@ class DiningHallController extends Controller
         return response()->json(['ok' => 0, 'orders' => []]);
     }
 
+    public function qrDebt(Request $req){
+        $check = $this->checkOrder(3, $req->table);
+        $sign = 0;
+        if($check){
+            $numberOrders = Temp_order::where('code', $check)->count();
+            $ordersSent = Temp_order::where('code', $check)->where('status', 3)->count();
+            $sign = $numberOrders == $ordersSent ? 1 : 0;
+        }
+
+        return response()->json(['ok' => $check, 'sign'=> $sign]);
+    }
+
     public function finalizeOrder(Request $req){
         $check = Temp_Order::where('table_id', $req->order_table)
             ->where('status', 3)
@@ -139,10 +152,39 @@ class DiningHallController extends Controller
 
     }
 
+    // public function pdfDebt($code){
+    //     $temps = Temp_Order::where('code', $code)->get();                   
+    //     $total = Temp_Order::where('code', $code)->sum(DB::raw('amount * price'));
+    //     $pdf = PDF::loadView('cash_register.debt', compact('total', 'temps'))->setPaper(array(0, 0, 107, 600), 'portrait');
+    //     return $pdf->download('debt.pdf');
+    // }
+
+    public function seeDebt($code, $type){
+        
+        $temps = Temp_Order::where('code', $code)->get();                   
+        $total = Temp_Order::where('code', $code)->sum(DB::raw('amount * price'));
+        if($type == 1){
+            // dd($temps);
+            return view('cash_register.debt', compact('type', 'total', 'temps'));
+        }
+        $pdf = PDF::loadView('cash_register.debt', compact('type', 'total', 'temps'))->setPaper(array(0, 0, 107, 600), 'portrait');
+        return $pdf->download('debt.pdf');   
+    }
+
     protected function getProducts($type, $group){
         // $result = Product::select(DB::raw("CONCAT(name,' ',price) AS name"),'id')->where('category_id', $type)->where('group', $group)->where('status', 1)->pluck('name', 'id');
         // $result = Product::select(DB::raw("CONCAT(name,' ',price) AS name"),'id')->withTrashed()->where('category_id', $type)->where('group', $group)->pluck('name', 'id');
         $result = Product::select(DB::raw("CONCAT(name,' ',price) AS name"),'id')->where('category_id', $type)->where('group', $group)->pluck('name', 'id');
         return $result;
     }
+
+    protected function checkOrder($status, $table){
+        $check = Temp_Order::where('table_id', $table)
+            ->where('status', $status)
+            ->where('business_id', 1)
+            ->where(DB::raw("CAST(created_at AS DATE)"), '=', DB::raw("DATE(now())"))
+            ->value('code');
+        
+        return $check; 
+    }  
 }

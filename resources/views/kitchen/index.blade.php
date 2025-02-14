@@ -57,32 +57,31 @@
             <div class="table-responsive">
                 @csrf
                 <table id="mytable" class="table table-bordred table-striped">
-                <thead>
-                    <th>Mesa <ion-icon name="checkmark-outline" style="font-size:30px;color:red;"></ion-icon></th>
-                    <th>Ambiente</th>
-                    <th>Orden</th>
-                    <th>Cantidad</th>
-                    <th>Nota</th>
-                    <th class="text-center">Estado</th>
-                </thead>
-            
-                <tbody id="message-tbody">
-            @foreach($orders as $order)
-                    <tr class="{{ $order->status >= 3 ? 'ready' : '' }}">
-                        <td>{{$order->identifier }}</td>
-                        <td>{{$order->room }}</td>
-                        <td>{{$order->name}}</td>
-                        <td>{{$order->amount}}</td>
-                        <td>{{$order->note}}</td>
-                        <td class="text-center">
-                            <button id="{{$order->id}}" data-status="{{$order->status}} " class="status btn btn-outline-info"><ion-icon name="{{ $order->status >= 3 ? 'checkmark-outline' : 'hourglass-outline' }}"></ion-icon></button>
-                            <p class="{{ $order->status >= 3 ? '' : 'crono' }}" data-time="{{ $order->created_at }}"></p>
-                        </td>
-                    </tr>
-            @endforeach    
-                </tbody>
+                    <thead>
+                        <th>Mesa <ion-icon name="checkmark-outline" style="font-size:30px;color:red;"></ion-icon></th>
+                        <th>Ambiente</th>
+                        <th>Orden</th>
+                        <th>Cantidad</th>
+                        <th>Nota</th>
+                        <th class="text-center">Estado</th>
+                    </thead>
+                
+                    <tbody id="message-tbody">
+                @foreach($orders as $order)
+                        <tr class="{{ $order->status >= 3 ? 'ready' : '' }}">
+                            <td>{{$order->identifier }}</td>
+                            <td>{{$order->room }}</td>
+                            <td>{{$order->name}}</td>
+                            <td>{{$order->amount}}</td>
+                            <td>{{$order->note}}</td>
+                            <td class="text-center">
+                                <button id="{{$order->id}}" data-status="{{$order->status}} " class="status btn btn-outline-info"><ion-icon name="{{ $order->status >= 3 ? 'checkmark-outline' : 'hourglass-outline' }}"></ion-icon></button>
+                                <p class="{{ $order->status >= 3 ? '' : 'crono' }}" data-time="{{ $order->created_at }}"></p>
+                            </td>
+                        </tr>
+                @endforeach    
+                    </tbody>
                 </table>
-
             </div>
         </div>
     </div>

@@ -67,6 +67,7 @@
                 <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
               </div>
+              <div id="qrcode" class="p-4"></div>
               <div class="modal-body">
               @csrf
                 <div class="mb-3">
@@ -133,6 +134,8 @@
                 <button class="btn btn-outline-success mt-4" id="send-kitchen">Enviar a cocina <ion-icon name="bonfire-outline" style="position:relative;top:3px;left:3px;"></ion-icon></button>
               </div>
               <div class="modal-footer">
+                <a id="vemos" class="btn btn-outline-info">Imprimir</a>
+                <button id="show_debt" class="btn btn-outline-info">Mostrar QR</button>
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                 <form action="{{ route('finalizeOrder') }}" method="post">
                     @csrf
@@ -146,14 +149,10 @@
         </div>
     </div>
 @endsection
-    <!-- <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.0/dist/jquery.slim.min.js"></script> -->
-    <!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script> -->
-    <!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js" integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy" crossorigin="anonymous"></script> -->
-  
-
 @push('scripts')
     <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.full.min.js"></script>
     <script src="https://unpkg.com/ionicons@latest/dist/ionicons.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <script type="module"> 
         import { io } from "https://cdn.socket.io/4.7.5/socket.io.esm.min.js";
         // const socket = io('https://chapi.nafer.com.pe');
@@ -226,8 +225,7 @@
         
     </script> 
     <script>
-
-// let finalizeOrder = document.getElementById('finalize_order');
+        $("#qrcode").hide();
 
 const btn = document.querySelectorAll(".btnModal");
 const modalRegistro = document.querySelector("#exampleModal");
@@ -235,51 +233,55 @@ const modalRegistro = document.querySelector("#exampleModal");
 const myModal = new bootstrap.Modal(modalRegistro);
 
 document.addEventListener("DOMContentLoaded", function(e){
-    
+    let link = "{{ url('see_debt/') }}"
     btn.forEach(mod => {
         mod.addEventListener("click",function(e){
             e.preventDefault()
             $('#send-kitchen').prop('disabled', true);
             $('#finalize_order').prop('disabled', true);
+            $('.modal-body').show();
+            $('#qrcode').hide();
             let table = $(this).attr("id");//e.target.getAttribute("id");
             $('#in_use').val(table);
             $('#order').val(table);
+            $('#show_debt').hide();
             try {
-            $('#tbody').empty();
-            let body = ''
-            var data = { table: table };
-            fetch(`check`, {
-                method: "POST",
-                headers: { 
-                    'Content-Type': 'application/json',
-                    "X-CSRF-Token": document.querySelector('input[name=_token]').value
-                },
-                body: JSON.stringify(data)
-            })
-            .then(response => response.json())
-            .then(datos => {
-                console.log(datos)
-                if(datos.ok){
-                    showResponse(datos['orders']);
-                    if(datos['sign']){
-                        $('#finalize_order').prop('disabled', false);
-                    }
-                }
-                else{
-                    $('#send-kitchen').prop('disabled', true);
-                    console.log(datos)
-                }
-            });
-        } catch (err) {
-            console.log("Error al realizar la petición AJAX: " + err.message);
-        }
+                $('#tbody').empty();
+                    let body = ''
+                    var data = { table: table };
+                    fetch(`check`, {
+                        method: "POST",
+                        headers: { 
+                            'Content-Type': 'application/json',
+                            "X-CSRF-Token": document.querySelector('input[name=_token]').value
+                        },
+                        body: JSON.stringify(data)
+                    })
+                    .then(response => response.json())
+                    .then(datos => {
+                        console.log(datos)
+                        if(datos.ok){
+                            showResponse(datos['orders']);
+                            if(datos['sign']){
+                                $('#finalize_order').prop('disabled', false);
+                                $('#show_debt').show();
+                                $('#vemos').attr('href', link+'/'+datos['code']+'/2'); 
+                            }
+                        }
+                        else{
+                            $('#send-kitchen').prop('disabled', true);
+                            console.log(datos)
+                        }
+                    });
+            } catch (err) {
+                console.log("Error al realizar la petición AJAX: " + err.message);
+            }
 
-            myModal.show();
-            
+            myModal.show(); 
         })
     })
 })
-// $('#exampleModal').modal();
+
 </script>
 <script>
         let idSelect = null;
@@ -287,6 +289,7 @@ document.addEventListener("DOMContentLoaded", function(e){
         let priceSelect = null;
         let table = document.getElementById('table')
         let tb_data = document.getElementById('tbody')
+        let qrDebt = document.getElementById("qrcode")
 
         let productos = new Array();
         let obj = {}
@@ -302,6 +305,7 @@ document.addEventListener("DOMContentLoaded", function(e){
 
         $("#btn-add").click(function(){
             $('#finalize_order').prop('disabled', true);
+            $('#show_debt').hide();
             tb_data.innerHTML=''
             let table = $('#in_use').val();
             alert(table)
@@ -324,21 +328,6 @@ document.addEventListener("DOMContentLoaded", function(e){
                 console.log(datos)
                 if(datos.ok){
                     showResponse(datos['orders']);
-                    // for(let i of datos['orders']){
-                    //     body += `<tr>
-                    //                     <td>
-                    //                     ${i.name}
-                    //                     <p>${i.price}</p>
-                    //                     </td>
-                    //                     <td>
-                    //                         ${i.status != 2 ? `<button class="btn" id="btn_add_${i.id}" onclick="modifyAmount(${i.id}, 'add')"> + </button>` : ""}<span id="amount_${i.id}">${i.amount}</span> ${i.status != 2 ? `<button class="btn" onclick="modifyAmount(${i.id}, 'sub')"> - </button>` : ""}
-                    //                     </td>
-                    //                     <td>
-                    //                         ${i.status != 2 ? `<button class="btn btn-info" onclick="eliminarFila(${i.id})"><i class="fa-solid fa-trash"></i></button>` : 'Enviado'}
-                    //                     </td>
-                    //                 </tr>`;
-                    //         }
-                    // $('#tbody').append(body)
                     $('#send-kitchen').prop('disabled', false);
                 }else{
                     console.log(datos)
@@ -371,26 +360,6 @@ document.addEventListener("DOMContentLoaded", function(e){
         });
         $('.others-select').select2({
             dropdownParent: $('#exampleModal .modal-body')
-        });
-        
-        $(document).ready(function() {
-
-            // $('.service').click(function(){
-            //     $('#product_val').empty('')
-            //     let opt = '<option value="">Seleccione un Producto</option>';
-            //     valor = $(this).attr('id')
-            //     service_id = valor.substring(8);
-                
-            //     let items = articulos.filter(element => element.service_id == service_id )
-
-                
-            //     $.each(items, (index, value) =>{
-            //         opt += `<option value="${value.id}">${value.name}<option>`
-            //     });
-
-            //     $('#product_val').append(opt)
-            // })             
-            
         });
 
         const modifyAmount = (id, op) =>{
@@ -466,18 +435,12 @@ document.addEventListener("DOMContentLoaded", function(e){
                     showResponse(datos['orders']);
                     if(datos['sign']){
                         $('#finalize_order').prop('disabled', false);
+                        $('#show_debt').show();
                     }
                 }else{
                     console.log(datos)
                 }
             });
-            // let indiceDeTres = productos.indexOf(id);
-            // const filtrados = productos.filter(item => item.id != id)
-            // // console.log(filtrados)
-            // // console.log(carro)
-            // productos = [...filtrados];
-            // console.log(productos)
-            // recorrer()
         }
 
         function showResponse(data){
@@ -526,43 +489,51 @@ document.addEventListener("DOMContentLoaded", function(e){
             $('#tbody').append(body)
         }
 
-        // $("#finalize_order").click(function(){
+        $('#show_debt').click(function(){
+            var that = $(this);
+            var texto = that.html();     //tomar el contenido
 
-        //     try {
+            if( texto  == 'Ocultar QR') {    //comparar el contenido
+                that.html('Mostrar QR'); 
+                $('#qrcode').empty();
+                $('.modal-body').show();  
+            }
+            else {
+                that.html('Ocultar QR');     //escribirlo
+                let table = $('#in_use').val();
+                let diseno = '';
+                try {
+                    $('#qrcode').empty();
+                        var data = { table: table };
+                        fetch(`qr_debt`, {
+                            method: "POST",
+                            headers: { 
+                                'Content-Type': 'application/json',
+                                "X-CSRF-Token": document.querySelector('input[name=_token]').value
+                            },
+                            body: JSON.stringify(data)
+                        })
+                        .then(response => response.json())
+                        .then(datos => {
+                            console.log(datos)
+                            if(datos.ok && datos.sign == 1){
+                                new QRCode(document.getElementById("qrcode"), "http://127.0.0.1:8000/see_debt/"+datos.ok+'/1');
+                                $('#qrcode').show();
+                                $('.modal-body').hide();
+                            }
+                            else{
+                                $('#send-kitchen').prop('disabled', true);
+                                console.log(datos)
+                            }
+                        });
+                } catch (err) {
+                    console.log("Error al realizar la petición AJAX: " + err.message);
+                }     //escribirlo
+            }
 
-        //         fetch(`finalize_order`, {
-        //             method: "POST",
-        //             headers: { 
-        //                 'Content-Type': 'application/json',
-        //                 "X-CSRF-Token": document.querySelector('input[name=_token]').value
-        //             },
-        //             body: JSON.stringify(obj)
-        //         })
-        //         .then(response => response.json())
-        //         .then(datos => {
-        //             // console.log(datos)
-        //             if(datos.ok){
-        //             // window.location.href = `show_document/${datos.code}`;
-        //             window.location.replace(`show_document/${datos.code}`);
-        //             // window.location=`http://localhost/erpf/origin2/public/venta/show_document/${datos.code}`
-        //             }
-        //             else{
-        //             console.log(datos)
-        //             }
-                
-        //         });
-        //     } catch (err) {
-        //         console.log("Error al realizar la petición AJAX: " + err.message);
-        //     }
+        })
 
-
-
-        // })
-        
-        
         function save(){
-        
-
             var pay=1;
             var customer_id = $('#customer_id option:selected').val();
             var doc_id = $('#document option:selected').val();
@@ -626,164 +597,6 @@ document.addEventListener("DOMContentLoaded", function(e){
                 console.log("Error al realizar la petición AJAX: " + err.message);
             }
         }
-    //         // Creamos un array vacio
-// var ElementosClick = new Array();
-// // Capturamos el click y lo pasamos a una funcion
-// document.onclick = captura_click;
-
-// function captura_click(e) {
-// // Funcion para capturar el click del raton
-// var HaHechoClick;
-// if (e == null) {
-// // Si hac click un elemento, lo leemos
-// HaHechoClick = event.srcElement;
-// } else {
-// // Si ha hecho click sobre un destino, lo leemos
-// HaHechoClick = e.target;
-// }
-// // Añadimos el elemento al array de elementos
-// ElementosClick.push(HaHechoClick);
-// // Una prueba con salida en consola
-// // console.log("Contenido sobre lo que ha hecho click: "+clickedElement.innerHTML);
-
-// console.log("Contenido sobre lo que ha hecho click: "+ ElementosClick.innerHTML);
-// }
-
-
-// const addAmount = (id)=>{
-//             let amount = $("#amount_"+id).text();
-//             amount ++
-//             var data = { id: id, amount: amount };
-//             $('#tbody').empty();
-//             let body = ''
-//             fetch(`modify_amount`, {
-//                 method: "POST",
-//                 headers: { 
-//                     'Content-Type': 'application/json',
-//                     "X-CSRF-Token": document.querySelector('input[name=_token]').value
-//                 },
-//                 body: JSON.stringify(data)
-//             })
-//             .then(response => response.json())
-//             .then(datos => {
-//                 console.log(datos)
-//                 if(datos.ok){
-//                     for(let i of datos['orders']){
-//                         body += `<tr>
-//                                     <td>${i.name}</td>
-//                                     <td>${i.price}</td>
-//                                     <td>
-//                                         ${i.status != 2 ? `<button class="btn" id="btn_add_${i.id}" onclick="addAmount(${i.id})"> + </button>` : ""}<span id="amount_${i.id}">${i.amount}</span> ${i.status != 2 ? `<button class="btn" onclick="subAmount(${i.id})"> - </button>` : ""}
-//                                     </td>
-//                                     <td>
-//                                         ${i.status != 2 ? `<button class="btn btn-info" onclick="eliminarFila(${i.id})"><i class="fa-solid fa-trash"></i></button>` : 'Enviado'}
-//                                     </td>
-//                                 </tr>`;
-//                     }
-//                     $('#tbody').append(body)
-//                     // $('#send-kitchen').prop('disabled', false);
-//                 }else{
-//                     console.log(datos)
-//                 }
-//             });
-//             $("#amount_"+id).text(amount);
-//         }
-
-
-// const addAmount = (id)=>{
-        //     let amount = $("#amount_"+id).text();
-        //     amount ++;  
-        //     var data = { id: id, amount: amount };
-        //     // $('#tbody').empty();
-        //     // let body = ''
-        //     fetch(`modify_amount`, {
-        //         method: "POST",
-        //         headers: { 
-        //             'Content-Type': 'application/json',
-        //             "X-CSRF-Token": document.querySelector('input[name=_token]').value
-        //         },
-        //         body: JSON.stringify(data)
-        //     })
-        //     .then(response => response.json())
-        //     .then(datos => {
-        //         console.log(datos)
-        //         if(datos.ok){
-        //             $("#amount_"+id).text(amount.toFixed(2));
-        //         }else{
-        //             console.log(datos)
-        //             $("#amount_"+id).text(amount--);
-        //             alert("no se pudo")
-        //         }
-        //     }); 
-        // }
-
-        // const subAmount = (id)=>{
-        //     let amount = $("#amount_"+id).text();
-        //     amount --
-        //     var data = { id: id, amount: amount };
-        //     // $('#tbody').empty();
-        //     // let body = ''
-        //     fetch(`modify_amount`, {
-        //         method: "POST",
-        //         headers: { 
-        //             'Content-Type': 'application/json',
-        //             "X-CSRF-Token": document.querySelector('input[name=_token]').value
-        //         },
-        //         body: JSON.stringify(data)
-        //     })
-        //     .then(response => response.json())
-        //     .then(datos => {
-        //         console.log(datos)
-        //         if(datos.ok){
-        //             $("#amount_"+id).html(amount.toFixed(2));
-        //         }else{
-        //             console.log(datos)
-        //             $("#amount_"+id).text(amount++);
-        //             alert("no se pudo")
-        //         }
-        //     });
-        //     // $("#amount_"+id).text(amount);
-        // }
-
-
-        // function recorrer(){
-        //     // let tb_datos = document.getElementById('tbody')
-        //     $('#tbody').empty();
-        //     let body = ''
-        //     productos.forEach(p =>{
-        //         body += `<tr>
-        //                     <td>${p.name}</td>
-        //                     <td>${p.price}</td>
-        //                     <td>
-        //                         <button class="btn" id="btn_add_${p.id}" onclick="modifyAmount(${i.id}, 'add')"> + </button><span id="amount_${p.id}">${p.cantidad}</span><button class="btn" onclick="modifyAmount(${i.id}, 'sub')"> - </button>
-        //                     </td>
-        //                     <td>
-        //                         <button class="btn btn-info" onclick="eliminarFila(${p.id})"><i class="fa-solid fa-trash"></i></button>
-        //                     </td>
-        //                 </tr>`;
-        //     })
-
-        //     $('#tbody').append(body)
-        // }
-
-
-        //${i.status != 2 ? `<button class="btn btn-outline-secondary btn-amount" id="btn_add_${i.id}" onclick="modifyAmount(${i.id}, 'add')" style="position:relative;top:2px;"><ion-icon name="add-outline"></ion-icon></button>` : ""}<span id="amount_${i.id}">${i.amount}</span> ${i.status != 2 ? `<button class="btn btn-outline-secondary btn-amount" onclick="modifyAmount(${i.id}, 'sub')" style="position:relative;top:2px;"> <ion-icon name="remove-outline"></ion-icon> </button>` : ""}
-
-                                //  ${i.status != 2 ? `<div class="btn-group">
-                        //          <button type="button" class="btn btn-outline-danger" onclick="eliminarFila(${i.id})"><ion-icon name="trash-outline" style="position:relative;top:3px;left:0px;"></ion-icon></button>
-                        //          <button type="button" class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-expanded="false">
-                        //              <span class="visually-hidden">Toggle Dropdown</span>
-                        //          </button>
-                        //          <ul class="dropdown-menu">
-                        //              <li>
-                        //              <a class="dropdown-item" href="#">Nota</a>
-                        //                  <textarea id="note_${i.id}" style="width:315px;padding:2px;"></textarea>
-                        //                  <br>
-                        //                  <button type="button" onclick="addNote(${i.id})">Enviar</button>
-                        //              </li>
-                        //          </ul>
-                        //      </div>` :'<ion-icon name="hourglass-outline"></ion-icon>' }
-
     </script>
 @endpush
 

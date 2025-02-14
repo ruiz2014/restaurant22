@@ -90,6 +90,9 @@ Route::post('modify_amount', [DiningHallController::class, 'modifyAmount']);
 Route::post('delete_order', [DiningHallController::class, 'deleteOrder']);
 Route::post('add_note', [DiningHallController::class, 'addNote']);
 Route::post('send_kitchen', [DiningHallController::class, 'sendToKitchen']);
+Route::post('qr_debt', [DiningHallController::class, 'qrDebt']);
+Route::get('see_debt/{code}/{type}', [DiningHallController::class, 'seeDebt']);
+// Route::get('pdf_debt/{code}', [DiningHallController::class, 'pdfDebt']);
 Route::post('finalize_order', [DiningHallController::class, 'finalizeOrder'])->name('finalizeOrder');
 
 
