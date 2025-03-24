@@ -44,7 +44,7 @@ class HomeController extends Controller
                     ->where(DB::raw('MONTH(at.created_at)'), $month)
                     ->groupBy('payment_methods.name')
                     ->get();
-        return $methods;           
+        return $methods;         
     }
 
     public function monthlyCare(){
