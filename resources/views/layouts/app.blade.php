@@ -25,7 +25,7 @@
 </style>
 
 </head>
-<body @auth {!! Auth::user()->rol == 4 ? 'onload="miTime();"' : '' !!} @endauth>
+<body @auth {!! Auth::user()->rol == 4 ? 'onload="miTime();"' : '' !!} @endauth {!! isset($panel) ? 'style="background:#f4f4f4;"' : "" !!}>
     <!-- <div id="app"> -->
 
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
@@ -127,7 +127,7 @@
         </div>
     </nav>
 
-    <main class="py-4" style="background:#f4f4f4;">
+    <main class="py-4">
         @yield('content')
     </main>
     <!-- </div> -->

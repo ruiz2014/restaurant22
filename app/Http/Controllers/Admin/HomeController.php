@@ -32,13 +32,13 @@ class HomeController extends Controller
         $bestSeller = $this->selling($currentMonth)->pluck('name');
         $bestSellerQty = $this->selling($currentMonth)->pluck('dish');
         // dd($this->currentDay($currentMonth, $currentDay), $weekAttention, $currentWeek, $currentDay, $currentMonth);
-        // dd($receipts);
+        // dd($monthlyCare, $receipts, $currentWeek );
         return view('admin.home.index', compact('receipts', 'pays', 'attentionDay', 'monthlyCare', 'months', 'bestSeller', 'bestSellerQty', 'attentionWeek'));
     }
 
     public function paymentMethods($month){
 
-        $methods = PaymentMethod::select(DB::raw('SUM(pl.total) as total'), 'payment_methods.name')
+        $methods = PaymentMethod::select(DB::raw('SUM(pl.total) as total'), 'payment_methods.name', 'payment_methods.image')
                     ->leftJoin('payment_logs as pl', 'payment_methods.id', '=', 'pl.method_id')
                     ->join('attentions as at', 'pl.attention_id', '=', 'at.id')
                     ->where(DB::raw('MONTH(at.created_at)'), $month)
@@ -48,7 +48,8 @@ class HomeController extends Controller
     }
 
     public function monthlyCare(){
-        $attentions = Attention::select(DB::raw('WEEK(created_at) as week'), DB::raw('MONTH(created_at) as month'), DB::raw('COUNT(id) as attentions'), DB::raw('SUM(total) as total'), DB::raw('ELT(MONTH(created_at), "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Setiembre", "Octubre", "Noviembre", "Diciembre") as months'), 'created_at')
+        $attentions = Attention::select(DB::raw('MONTH(created_at) as month'), DB::raw('COUNT(id) as attentions'), DB::raw('SUM(total) as total'), DB::raw('ELT(MONTH(created_at), "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Setiembre", "Octubre", "Noviembre", "Diciembre") as months'), 'created_at')
+                    ->orderBy('month')            
                     ->groupBy('months')
                     ->get();
         // dd($attentions);            
@@ -65,7 +66,7 @@ class HomeController extends Controller
 
     public function currentWeek($week){
         $week = Attention::select(DB::raw('SUM(total) as total'), DB::raw('COUNT(id) as attentions'))
-                    ->where(DB::raw('WEEK(created_at)'), $week)
+                    ->where(DB::raw('WEEK(created_at, 1)'), $week)
                     ->first();
         // dd($week);
         return $week;            

@@ -62,8 +62,9 @@ class PaymentBoxController extends Controller
         $payment_methods = PaymentMethod::all();
 
         $total = Temp_Order::where('code', $order)->sum(DB::raw('amount * price'));
+        $table = $attentions->value('table_id');
 
-        return view('cash_register.bill', compact('attentions', 'total', 'order', 'payment_methods'));
+        return view('cash_register.bill', compact('attentions', 'total', 'order', 'payment_methods', 'table'));
     }
 
     public function store(Request $request){

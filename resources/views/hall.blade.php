@@ -25,7 +25,14 @@
                 <p>{{ $message }}</p>
             </div>
         @endif
-
+<audio id="notif_audio">
+    <source src="{!! asset('sounds/mesero.ogg') !!}" type="audio/ogg">
+    <source src="{!! asset('sounds/mesero.mp3') !!}" type="audio/mp3">
+    <source src="{!! asset('sounds/mesero.wav') !!}" type="audio/wav">
+</audio>
+<!-- <audio preload="auto"> 
+    <source src="{!! asset('sounds/notify.mp3') !!}" type="audio/mp3">
+</audio> -->
 
     <ul class="nav nav-tabs wrapper-tabs" id="myTab" role="tablist" style="">
         @foreach($rooms as $room)
@@ -151,13 +158,25 @@
 @endsection
 @push('scripts')
     <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.full.min.js"></script>
-    <script src="https://unpkg.com/ionicons@latest/dist/ionicons.js"></script>
+    <!-- <script src="https://unpkg.com/ionicons@latest/dist/ionicons.js"></script> -->
+    <script type="module" src="https://cdn.jsdelivr.net/npm/ionicons@latest/dist/ionicons/ionicons.esm.js"></script>
+<script nomodule src="https://cdn.jsdelivr.net/npm/ionicons@latest/dist/ionicons/ionicons.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-    <script type="module"> 
+    <!-- <script type="module"> 
         import { io } from "https://cdn.socket.io/4.7.5/socket.io.esm.min.js";
         // const socket = io('https://chapi.nafer.com.pe');
+        const socket = io('http://localhost:3000'); -->
+    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>    
+    <script> 
+
+        // const audio = document.querySelector("audio");
+        // let sound = false;
+        // let timer;
+
+        // audio.play();
+        // $('#notif_audio')[0].play();
+
         const socket = io('http://localhost:3000');
-        
         $('#send-kitchen').click(function(){
             
             try {
@@ -174,7 +193,7 @@
                     })
                     .then(response => response.json())
                     .then(datos => {
-                        console.log(datos)
+                        // console.log(datos)
                         if(datos.ok){
                             $('#tbody').empty();
                             showResponse(datos.orders);
@@ -205,6 +224,13 @@
         });
 
         socket.on('chat', (msg)=>{
+            alert("volvio desde coxcina")
+            // console.log(msg);
+            if (msg.hasOwnProperty('message')) {
+                
+                $('#notif_audio')[0].play();
+            }
+            
                 // let item = document.createElement('li')
                 // item.textContent = msg
                 // mensaje.appendChild(item)
@@ -215,72 +241,175 @@
         socket.on('hall', (msg)=>{
             // if(msg.id == 6){
             // }
-            alert(msg.message)
+            
+            console.log(msg)
+            if (msg.hasOwnProperty('message')) {
+                notify();
+                $('#notif_audio')[0].play();
+                alert(msg.message)
+            }
+            // $('#notif_audio')[0].play();
                 // let item = document.createElement('li')
                 // item.textContent = msg
                 // mensaje.appendChild(item)
                 // window.scrollTo(0, document.body.scrollHeight)
                 // alert(msg)
         })
+
+        socket.on('cashier', (msg)=>{
+            alert(msg)
+            $('#notif_audio')[0].play();
+            // console.log(msg)
+            $('#'+msg).css('background', '');
+            $('#'+msg).addClass("btnModal");
+            $('#'+msg).removeClass("opacity-25");
+            $('#'+msg).prev().removeClass("opacity-25");
+            $('#'+msg).click( function(e){ tables(e,msg)})
+        })
+
+
+        $('#finalize_order').click(function(){
+            socket.emit('cashier', "hola");
+            const firstForm = document.forms[0]; // accessing first form
+            firstForm.submit();
+        })
         
     </script> 
     <script>
         $("#qrcode").hide();
 
-const btn = document.querySelectorAll(".btnModal");
-const modalRegistro = document.querySelector("#exampleModal");
-//las opciones son opcional - puedes quitarlo
-const myModal = new bootstrap.Modal(modalRegistro);
+        let inUse = {!! json_encode($inUse) !!}
 
-document.addEventListener("DOMContentLoaded", function(e){
-    let link = "{{ url('see_debt/') }}"
-    btn.forEach(mod => {
-        mod.addEventListener("click",function(e){
-            e.preventDefault()
-            $('#send-kitchen').prop('disabled', true);
-            $('#finalize_order').prop('disabled', true);
-            $('.modal-body').show();
-            $('#qrcode').hide();
-            let table = $(this).attr("id");//e.target.getAttribute("id");
-            $('#in_use').val(table);
-            $('#order').val(table);
-            $('#show_debt').hide();
-            try {
-                $('#tbody').empty();
-                    let body = ''
-                    var data = { table: table };
-                    fetch(`check`, {
-                        method: "POST",
-                        headers: { 
-                            'Content-Type': 'application/json',
-                            "X-CSRF-Token": document.querySelector('input[name=_token]').value
-                        },
-                        body: JSON.stringify(data)
-                    })
-                    .then(response => response.json())
-                    .then(datos => {
-                        console.log(datos)
-                        if(datos.ok){
-                            showResponse(datos['orders']);
-                            if(datos['sign']){
-                                $('#finalize_order').prop('disabled', false);
-                                $('#show_debt').show();
-                                $('#vemos').attr('href', link+'/'+datos['code']+'/2'); 
-                            }
-                        }
-                        else{
-                            $('#send-kitchen').prop('disabled', true);
-                            console.log(datos)
-                        }
-                    });
-            } catch (err) {
-                console.log("Error al realizar la petición AJAX: " + err.message);
+        // for (i = 0; i < inUse.length; i++) {
+        //     $('#'+inUse[i]).css('background', '#2ec65a40');
+        // } 
+        for(const inU of inUse){
+            if(inU.status == 4){
+                // $('#'+inU.table_id).css('background', 'red');
+                // $('#'+inU.table_id).prop('disabled',true);
+                $('#'+inU.table_id).removeClass("btnModal");
+                $('#'+inU.table_id).addClass("opacity-25");
+                $('#'+inU.table_id).prev().addClass("opacity-25");
+
+            }else{
+                $('#'+inU.table_id).css('background', '#2ec65a40');
             }
+            // console.log(inU.table_id)
+        }
 
-            myModal.show(); 
+        const btn = document.querySelectorAll(".btnModal");
+        const modalRegistro = document.querySelector("#exampleModal");
+        //las opciones son opcional - puedes quitarlo
+        const myModal = new bootstrap.Modal(modalRegistro);
+
+        document.addEventListener("DOMContentLoaded", function(e){
+            // let link = "{{ url('see_debt/') }}"
+            btn.forEach(mod => {
+                mod.addEventListener("click", function(e){
+
+                    let table = $(this).attr("id");
+                    tables(e, table);
+                    // tables(e);
+
+                    // e.preventDefault()
+                    // $('#send-kitchen').prop('disabled', true);
+                    // $('#finalize_order').prop('disabled', true);
+                    // $('.modal-body').show();
+                    // $('#qrcode').hide();
+                    // let table = $(this).attr("id");//e.target.getAttribute("id");
+                    // $('#in_use').val(table);
+                    // $('#order').val(table);
+                    // $('#show_debt').hide();
+                    // try {
+                    //     $('#tbody').empty();
+                    //         let body = ''
+                    //         var data = { table: table };
+                    //         fetch(`check`, {
+                    //             method: "POST",
+                    //             headers: { 
+                    //                 'Content-Type': 'application/json',
+                    //                 "X-CSRF-Token": document.querySelector('input[name=_token]').value
+                    //             },
+                    //             body: JSON.stringify(data)
+                    //         })
+                    //         .then(response => response.json())
+                    //         .then(datos => {
+                    //             console.log(datos)
+                    //             if(datos.ok){
+                    //                 // mod.css('background', '#2ec65a40');
+                    //                 mod.style.backgroundColor='#2ec65a40';
+                    //                 showResponse(datos['orders']);
+                    //                 if(datos['sign']){
+                    //                     $('#finalize_order').prop('disabled', false);
+                    //                     $('#show_debt').show();
+                    //                     $('#vemos').attr('href', link+'/'+datos['code']+'/2'); 
+                    //                 }
+                    //             }
+                    //             else{
+                    //                 $('#send-kitchen').prop('disabled', true);
+                    //                 console.log(datos)
+                    //             }
+                    //         });
+                    // } catch (err) {
+                    //     console.log("Error al realizar la petición AJAX: " + err.message);
+                    // }
+                    // // mod.style.backgroundColor="blue";
+                    // myModal.show(); 
+                })
+            })
         })
-    })
-})
+
+        function tables(event, table){
+            let link = "{{ url('see_debt/') }}"
+            event.preventDefault()
+                    $('#send-kitchen').prop('disabled', true);
+                    $('#finalize_order').prop('disabled', true);
+                    $('.modal-body').show();
+                    $('#qrcode').hide();
+                    // let table = $(this).attr("id");//e.target.getAttribute("id");
+                    // let table = event.target.getAttribute("id");
+
+                    $('#in_use').val(table);
+                    $('#order').val(table);
+                    $('#show_debt').hide();
+                    // alert(table);
+                    try {
+                        $('#tbody').empty();
+                            let body = ''
+                            var data = { table: table };
+                            fetch(`check`, {
+                                method: "POST",
+                                headers: { 
+                                    'Content-Type': 'application/json',
+                                    "X-CSRF-Token": document.querySelector('input[name=_token]').value
+                                },
+                                body: JSON.stringify(data)
+                            })
+                            .then(response => response.json())
+                            .then(datos => {
+                                console.log(datos)
+                                if(datos.ok){
+                                    // mod.css('background', '#2ec65a40');
+                                    // mod.style.backgroundColor='#2ec65a40';
+                                    $('#'+table).css('background', '#2ec65a40');
+                                    showResponse(datos['orders']);
+                                    if(datos['sign']){
+                                        $('#finalize_order').prop('disabled', false);
+                                        $('#show_debt').show();
+                                        $('#vemos').attr('href', link+'/'+datos['code']+'/2'); 
+                                    }
+                                }
+                                else{
+                                    $('#send-kitchen').prop('disabled', true);
+                                    console.log(datos)
+                                }
+                            });
+                    } catch (err) {
+                        console.log("Error al realizar la petición AJAX: " + err.message);
+                    }
+                    // mod.style.backgroundColor="blue";
+                    myModal.show(); 
+        }
 
 </script>
 <script>
@@ -347,6 +476,9 @@ document.addEventListener("DOMContentLoaded", function(e){
             $('#fitting').change()
             $('#other').val("")
             $('#other').change()
+
+            // table.style.backgroundColor="blue";
+            $('#'+table).css('background', '#2ec65a40');
         });
 
         $('.dishes-select').select2({
@@ -415,6 +547,10 @@ document.addEventListener("DOMContentLoaded", function(e){
         const eliminarFila = (id) => {
             var data = { id: id };
             $('#tbody').empty();
+
+            // $('#'+inUse[i]).css('background', '#2ec65a40');
+            let table = $('#in_use').val();
+            // alert(table)
             let body = ''
             fetch(`delete_order`, {
                 method: "POST",
@@ -430,6 +566,7 @@ document.addEventListener("DOMContentLoaded", function(e){
                 if(datos.ok){
                     if(datos['orders'].length === 0){
                         $('#send-kitchen').prop('disabled', true);
+                        $('#'+table).css('background', '');
                         return 0
                     }
                     showResponse(datos['orders']);
@@ -532,6 +669,13 @@ document.addEventListener("DOMContentLoaded", function(e){
             }
 
         })
+
+        // $('#joderMierda').on('submit', function() {
+        //     alert('salio');
+        //     let table = $('#in_use').val();
+        //     $('#'+table).css('background', 'red');
+        //     return true;
+        // });
 
         function save(){
             var pay=1;

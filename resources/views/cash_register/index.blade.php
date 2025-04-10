@@ -5,6 +5,11 @@
 @endsection
 
 @section('content')
+    <audio id="notif_audio">
+        <source src="{!! asset('sounds/cajero.ogg') !!}" type="audio/ogg">
+        <source src="{!! asset('sounds/cajero.mp3') !!}" type="audio/mp3">
+        <source src="{!! asset('sounds/cajero.wav') !!}" type="audio/wav">
+    </audio>
     <div class="container-fluid">
         <div class="row">
             <div class="col-sm-12">
@@ -64,3 +69,21 @@
         </div>
     </div>
 @endsection
+@push('scripts')
+<script>
+    //  $('#notif_audio')[0].play();
+</script>
+<script type="module"> 
+
+    import { io } from "https://cdn.socket.io/4.7.5/socket.io.esm.min.js";
+    // const socket = io('https://chapi.nafer.com.pe');
+    const socket = io('http://localhost:3000');
+
+    socket.on('cashier', (msg)=>{
+        // alert("A caja")
+        $('#notif_audio')[0].play();
+        alert("Llego una nueva orden para generar su voucher...")
+        location.reload();
+    })
+</script>    
+@endpush   

@@ -21,8 +21,16 @@ class DiningHallController extends Controller
         $others = $this->getProducts(5, $group); //Product::select(DB::raw("CONCAT(name,' ',price) AS name"),'id')->where('product_type', 4)->pluck('name', 'id');
         $rooms = Room::select('id', 'name')->get();
         $tables = Table::select('id', 'identifier', 'room_id')->get();
-        
-        return view('hall', compact('dishes', 'drinks', 'fittings', 'others', 'tables', 'rooms'));
+        $inUse = Temp_Order::select('table_id', 'status')
+                    ->where('status', '!=', 5)
+                    ->where('business_id', 1)
+                    ->where(DB::raw("CAST(created_at AS DATE)"), '=', DB::raw("DATE(now())"))
+                    ->groupBy('table_id')
+                    // ->pluck('table_id', 'status');
+                    // ->pluck('table_id');
+                    ->get();
+        // dd($inUse);
+        return view('hall', compact('inUse', 'dishes', 'drinks', 'fittings', 'others', 'tables', 'rooms'));
     }
 
     public function check(Request $req){

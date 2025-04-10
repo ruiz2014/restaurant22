@@ -9,9 +9,9 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" integrity="sha512-Fo3rlrZj/k7ujTnHg4CGR2D7kSs0v4LLanw2qksYuRlEzO+tcaEPQogQ0KaoGN26/zrn20ImR1DfuLWnOo7aBA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" /> -->
-    <link href=" https://cdn.jsdelivr.net/npm/ionicons@7.4.0/dist/collection/components/icon/icon.min.css " rel="stylesheet"> 
+    <!-- <link href=" https://cdn.jsdelivr.net/npm/ionicons@7.4.0/dist/collection/components/icon/icon.min.css " rel="stylesheet"> 
     <script type="module" src="https://unpkg.com/ionicons@latest/dist/ionicons/ionicons.esm.js"></script>
-    <script nomodule="" src="https://unpkg.com/ionicons@latest/dist/ionicons/ionicons.js"></script>
+    <script nomodule="" src="https://unpkg.com/ionicons@latest/dist/ionicons/ionicons.js"></script> -->
     <style>
         /* .mesa{
             border:solid 1px red;
@@ -53,6 +53,11 @@
 
 
 @section('content')
+    <audio id="notif_audio">
+        <source src="{!! asset('sounds/cocina.ogg') !!}" type="audio/ogg">
+        <source src="{!! asset('sounds/cocina.mp3') !!}" type="audio/mp3">
+        <source src="{!! asset('sounds/cocina.wav') !!}" type="audio/wav">
+    </audio>
     <div class="container mt-4">
         <div class="row">
         
@@ -91,7 +96,9 @@
 @endsection
 
 @push('scripts')
-
+<script type="module" src="https://cdn.jsdelivr.net/npm/ionicons@latest/dist/ionicons/ionicons.esm.js"></script>
+<script nomodule src="https://cdn.jsdelivr.net/npm/ionicons@latest/dist/ionicons/ionicons.js"></script>
+<!-- <script src="https://unpkg.com/ionicons@latest/dist/ionicons.js"></script> -->
 <!-- <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.0/dist/jquery.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script> -->
 <!-- <script src="https://unpkg.com/ionicons@latest/dist/ionicons.js"></script> -->
@@ -122,6 +129,7 @@
 
 </script> -->
 <script>
+    //  $('#notif_audio')[0].play();
     //     let elementos = document.querySelectorAll('input[name="reloj"]');
     //     elementos.forEach(function(element){
     //     element.addEventListener("load", function () {
@@ -188,8 +196,13 @@
     })
 
     socket.on('chat', (msg)=>{
+        notify();
+        if (!msg.hasOwnProperty('message')) {
+                $('#notif_audio')[0].play();
+        }
+        // $('#notif_audio')[0].play();
             let body = ''
-            alert('llego')
+            // alert('llego')
             console.log(msg)
             msg.forEach(p =>{
                 body += `<tr>
@@ -222,15 +235,49 @@
         })
         .then(response => response.json())
         .then(datos => {
-            // console.log(datos)
+            console.log(datos)
             if(datos.ok){
                 socket.emit('hall', datos)
                 location.reload();
             }
             
         })
-        alert(temp_id);
+        // alert(temp_id);
     })
+
+    // function notify(){
+    //     if (!("Notification" in window)) {
+    //         alert(
+    //         "Este navegador no es compatible con las notificaciones de escritorio",
+    //         );
+    //     }
+
+    //     // Comprobamos si los permisos han sido concedidos anteriormente
+    //     else if (Notification.permission === "granted") {
+    //         // Si es correcto, lanzamos una notificación
+    //         var img = "https://cvbox.org/_next/image?url=%2Fimages%2Flogo.png&w=256&q=75";
+    //         var text = '¡OYE! Atiende la mesa pedaso de mierda...';
+    //         var notification = new Notification("¡Hola normal!", {
+    //                 body: text,
+    //                 icon: img,
+    //         });
+    //     }
+
+    //     // Si no, pedimos permiso para la notificación
+    //     else if (Notification.permission !== "denied") {
+    //         var img = "https://cvbox.org/_next/image?url=%2Fimages%2Flogo.png&w=256&q=75";
+    //         var text = '¡OYE! Tu tarea ahora está vencida.';
+    //         Notification.requestPermission().then(function (permission) {
+    //         // Si el usuario nos lo concede, creamos la notificación
+    //         if (permission === "granted") {
+    //             var notification = new Notification("¡Hola al solicitar!", {
+    //                 body: text,
+    //                 icon: img,
+    //             });
+    //         }
+    //         });
+    //     }
+    // }
 
     // function eliminarFila(id, status){
     //     alert("Joder tio");

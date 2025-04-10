@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 
 use App\Models\Biller\Attention;
 use App\Models\Biller\Summary as Summ;
+use App\Models\Biller\Log_Receipt;
 use DB;
 
 use Greenter\Model\Response\SummaryResult;
@@ -113,6 +114,7 @@ class SummaryController extends Controller
         $cdr = $result->getCdrResponse();
         // sleep(2);
         // dd($cdr);
+        $code = (int)$cdr->getCode();
         if ($code === 0) {
 
             $message = 'ACEPTADA';
@@ -133,13 +135,13 @@ class SummaryController extends Controller
         }
 
         $status = $message;
-        $message .=''.$cdr->getDescription().PHP_EOL;
+        $message .=' '.$cdr->getDescription().PHP_EOL;
         //Summ::create(['hash'=>$hash, 'identifier'=>$xml, 'resume' => $resumen, 'cdr'=>$code, 'status'=>$status, 'message'=>$message, 'dispatched'=>1, 'received'=>1, 'completed'=>1]);
 
         Summ::create([
             'sunat_code'=>'RC',
             'hash'=>$hash,
-            'date_create'=>$request->date_form,
+            'date_created'=>$request->date_form,
             'date_sent'=>date('Y-m-d'),
             'identifier'=>$xml,
             'ticket'=>$ticket,

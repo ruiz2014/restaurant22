@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.app', ['panel' => true])
 
 @section('template_title')
     <!-- {{ __('Create') }} Product -->Panel
@@ -49,7 +49,7 @@
             <div class="card mb-3" style="background:black;color:white;">
                 <div class="row g-0">
                     <div class="col-md-3 d-flex justify-content-center align-items-center">
-                        <ion-icon name="document-text-outline" style="background:white;font-size:25px;color:black;border: 1px solid white;padding: 5px;border-radius: 50%;"></ion-icon>
+                        <ion-icon name="wallet-outline" style="background:white;font-size:25px;color:black;border: 1px solid white;padding: 5px;border-radius: 50%;"></ion-icon>
                     </div>
                     <div class="col-md-9">
                         <div class="card-body p-1">
@@ -64,7 +64,7 @@
             <div class="card mb-3" style="background:black;color:white;">
                 <div class="row g-0">
                     <div class="col-md-3 d-flex justify-content-center align-items-center">
-                        <ion-icon name="receipt-outline" style="background:white;font-size:25px;color:black;border: 1px solid white;padding: 5px;border-radius: 50%;"></ion-icon>
+                        <ion-icon name="today-outline" style="background:white;font-size:25px;color:black;border: 1px solid white;padding: 5px;border-radius: 50%;"></ion-icon>
                     </div>
                     <div class="col-md-9">
                         <div class="card-body p-1">
@@ -115,7 +115,7 @@
                     @foreach($pays as $pay)
                       <li class="d-flex justify-content-between align-items-start my-3">
                         <div class="ms-2 me-auto d-flex align-items-center">
-                            <ion-icon name="phone-portrait-outline" class="me-2 fs-4" style="font-size:20px;"></ion-icon>
+                            <ion-icon name="{{ $pay->image }}" class="me-2 fs-4" style="font-size:20px;"></ion-icon>
                             <div class="fw-nomal">Pagos por {{ $pay->name }}</div>
                         </div>
                         <span class="badge text-bg-primary rounded-pill">S/. {{ $pay->total}}</span>

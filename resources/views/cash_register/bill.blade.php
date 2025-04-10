@@ -193,7 +193,7 @@
                 </ul>
             </div>
         </div>
-        
+        <input type="hidden" id="table" name="table" value="{{ $table }}">
         <div class="row mt-4">
             <div class="col-md-12">
                 <button id="btn-generate" class="btn btn-outline-primary" >Generar Comprobante</button>
@@ -344,9 +344,57 @@
     </style>
 @endsection
 @section('script')
+<script type="module"> 
+
+    import { io } from "https://cdn.socket.io/4.7.5/socket.io.esm.min.js";
+    // const socket = io('https://chapi.nafer.com.pe');
+    const socket = io('http://localhost:3000');
+
+    let total_pay = 0;
+    let btn_generate = document.getElementById('btn-generate');
+    btn_generate.onclick = ()=>{validar();} 
+
+    function validar(){
+        let total =  document.getElementById('total').innerHTML;
+        
+        document.querySelectorAll('#payMethod input[type=checkbox]').forEach((e)=>{
+            if(e.checked === true){
+                total_pay += parseFloat(document.getElementById(`payMethod_${e.value}`).value);
+            }
+        });
+// console.log(total+ ' ' +total_pay)
+        if(parseFloat(total) !== total_pay){
+            alert("El monto no es igual")
+            return 0;
+        } 
+
+        generate_receipt();
+    }
+
+    function generate_receipt(){
+        
+            let table = document.getElementById('table').value;
+            // alert(table)
+            socket.emit('cashier', table);
+            let prue = document.getElementById('prue');
+            // var form_receipt = new FormData(prue); 
+            // form_receipt.append("customer_id", customer_id.value);
+            // form_receipt.append("customer_doc", customer_doc.value);
+            // form_receipt.append("receipt", receipt.value);
+            // form_receipt.append("code", code.value);
+            // form_receipt.append("_token", document.querySelector('input[name=_token]').value);
+
+            prue.submit();
+
+            // var request = new XMLHttpRequest();
+            // request.open("POST", "{{ route('pay.store') }}");
+            // request.send(form_receipt);
+        }
+
+</script>    
 <script>
-    window.addEventListener("load", function(){
-        let total_pay = 0;
+    window.addEventListener("DOMContentLoaded", function(){
+        // let total_pay = 0;
         let receipt = document.getElementById('receipt');
         let term = document.getElementById('term');
         let box = document.getElementById('box-search');
@@ -366,7 +414,7 @@
         let current_doc = document.getElementById('document');
         let customer_name = document.getElementById('name');
 
-        let btn_generate = document.getElementById('btn-generate');
+        // let btn_generate = document.getElementById('btn-generate');
 
         let customer_form = document.getElementById('customer_form');
 
@@ -383,8 +431,13 @@
                 document.getElementById(`payMethod_${ev.target.value}`).style.display="block"
                 // console.log(ev.target.checked, ev.target.value)
             }else{
-                document.getElementById(`payMethod_${ev.target.value}`).style.display="none"
-                document.getElementById(`payMethod_${ev.target.value}`).value=""
+                verbo = document.getElementById(`payMethod_${ev.target.value}`)
+                if(typeof verbo !== 'undefined' && verbo !== null) {
+                    verbo.style.display="none";
+                    verbo.value=""
+                }
+                
+                // document.getElementById(`payMethod_${ev.target.value}`).value=""
             }
 
         }
@@ -396,7 +449,7 @@
         tipo_doc.onchange = () =>{ current_doc.value = ''; }
         clear_btn.onclick = ()=>{ clean(); } 
 
-        btn_generate.onclick = ()=>{ valiadar();} // }
+        // btn_generate.onclick = ()=>{ validar();} // }
 
         term.onclick = function(e){ 
             const url = `/tool/search?customer=`;
@@ -538,43 +591,45 @@
 			    // }, 3000);
             })
         }
+/*++++++++++++++++++ESTA FUNCION SI SIRVE ++++++ OJO*/
+        // function generate_receipt(){
+        //     socket.emit('chat', 'hola como estan')
+        //     let prue = document.getElementById('prue');
+        //     // var form_receipt = new FormData(prue); 
+        //     // form_receipt.append("customer_id", customer_id.value);
+        //     // form_receipt.append("customer_doc", customer_doc.value);
+        //     // form_receipt.append("receipt", receipt.value);
+        //     // form_receipt.append("code", code.value);
+        //     // form_receipt.append("_token", document.querySelector('input[name=_token]').value);
 
-        function generate_receipt(){
-            
-            let prue = document.getElementById('prue');
-            // var form_receipt = new FormData(prue); 
-            // form_receipt.append("customer_id", customer_id.value);
-            // form_receipt.append("customer_doc", customer_doc.value);
-            // form_receipt.append("receipt", receipt.value);
-            // form_receipt.append("code", code.value);
-            // form_receipt.append("_token", document.querySelector('input[name=_token]').value);
+        //     // prue.submit();
 
-            prue.submit();
+        //     // var request = new XMLHttpRequest();
+        //     // request.open("POST", "{{ route('pay.store') }}");
+        //     // request.send(form_receipt);
+        // }
 
-            // var request = new XMLHttpRequest();
-            // request.open("POST", "{{ route('pay.store') }}");
-            // request.send(form_receipt);
-        }
 
-        function valiadar(){
-            let total =  document.getElementById('total').innerHTML;
-            total_pay = 0;
-            document.querySelectorAll('#payMethod input[type=checkbox]').forEach((e)=>{
-                if(e.checked === true){
-                    total_pay += parseFloat(document.getElementById(`payMethod_${e.value}`).value);
-                }
-            });
-// console.log(total+ ' ' +total_pay)
-            if(parseFloat(total) !== total_pay){
-                alert("El monto no es igual")
-                return 0;
-            } 
+/*++++ ESTA FUNCTION SI SIRVE ++++++++ OJOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO*/
+//         function validar(){
+//             let total =  document.getElementById('total').innerHTML;
+//             total_pay = 0;
+//             document.querySelectorAll('#payMethod input[type=checkbox]').forEach((e)=>{
+//                 if(e.checked === true){
+//                     total_pay += parseFloat(document.getElementById(`payMethod_${e.value}`).value);
+//                 }
+//             });
+// // console.log(total+ ' ' +total_pay)
+//             if(parseFloat(total) !== total_pay){
+//                 alert("El monto no es igual")
+//                 return 0;
+//             } 
 
-            generate_receipt();
-            // else{
-            //     alert('mierda')
-            // }
-        }
+//             generate_receipt();
+//             // else{
+//             //     alert('mierda')
+//             // }
+//         }
         // clear.addEventListener("click", function() {
         //     term.value=''; 
         //     customer_id.value=''
