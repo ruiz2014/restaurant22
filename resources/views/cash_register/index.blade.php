@@ -81,9 +81,11 @@
 
     socket.on('cashier', (msg)=>{
         // alert("A caja")
+        notify("Llego una nueva orden para generar su voucher...");
         $('#notif_audio')[0].play();
-        alert("Llego una nueva orden para generar su voucher...")
-        location.reload();
+        // alert("Llego una nueva orden para generar su voucher...")
+        setInterval(function(){ location.reload(); }, 4000);
+        // location.reload();
     })
 </script>    
 @endpush   

@@ -1,4 +1,4 @@
-function notify(){
+function notify(msg){
     if (!("Notification" in window)) {
         alert(
         "Este navegador no es compatible con las notificaciones de escritorio",
@@ -9,7 +9,7 @@ function notify(){
     else if (Notification.permission === "granted") {
         // Si es correcto, lanzamos una notificación
         var img = "https://cvbox.org/_next/image?url=%2Fimages%2Flogo.png&w=256&q=75";
-        var text = '¡OYE! Atiende la mesa pedaso de mierda...';
+        var text = msg;
         var notification = new Notification("¡Hola normal!", {
                 body: text,
                 icon: img,
@@ -19,7 +19,7 @@ function notify(){
     // Si no, pedimos permiso para la notificación
     else if (Notification.permission !== "denied") {
         var img = "https://cvbox.org/_next/image?url=%2Fimages%2Flogo.png&w=256&q=75";
-        var text = '¡OYE! Tu tarea ahora está vencida.';
+        var text = msg;
         Notification.requestPermission().then(function (permission) {
         // Si el usuario nos lo concede, creamos la notificación
         if (permission === "granted") {

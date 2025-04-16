@@ -224,18 +224,17 @@
         });
 
         socket.on('chat', (msg)=>{
-            alert("volvio desde coxcina")
+            // alert("volvio desde coxcina")
             // console.log(msg);
             if (msg.hasOwnProperty('message')) {
                 
                 $('#notif_audio')[0].play();
             }
-            
                 // let item = document.createElement('li')
                 // item.textContent = msg
                 // mensaje.appendChild(item)
                 // window.scrollTo(0, document.body.scrollHeight)
-                alert(msg)
+                // alert(msg) [object object]
         })
 
         socket.on('hall', (msg)=>{
@@ -244,9 +243,9 @@
             
             console.log(msg)
             if (msg.hasOwnProperty('message')) {
-                notify();
+                notify(msg.message);
                 $('#notif_audio')[0].play();
-                alert(msg.message)
+                // alert(msg.message)
             }
             // $('#notif_audio')[0].play();
                 // let item = document.createElement('li')
@@ -257,7 +256,8 @@
         })
 
         socket.on('cashier', (msg)=>{
-            alert(msg)
+            // alert(msg)
+            notify("Se genero voucher para la mesa "+ msg);
             $('#notif_audio')[0].play();
             // console.log(msg)
             $('#'+msg).css('background', '');

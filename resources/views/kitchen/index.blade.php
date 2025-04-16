@@ -196,14 +196,15 @@
     })
 
     socket.on('chat', (msg)=>{
-        notify();
+        
         if (!msg.hasOwnProperty('message')) {
-                $('#notif_audio')[0].play();
+            notify("LLego un articulo para su preparacion...");
+            $('#notif_audio')[0].play();
         }
         // $('#notif_audio')[0].play();
             let body = ''
             // alert('llego')
-            console.log(msg)
+            // console.log(msg)
             msg.forEach(p =>{
                 body += `<tr>
                             <td>${p.identifier}</td>
@@ -235,7 +236,7 @@
         })
         .then(response => response.json())
         .then(datos => {
-            console.log(datos)
+            // console.log(datos)
             if(datos.ok){
                 socket.emit('hall', datos)
                 location.reload();

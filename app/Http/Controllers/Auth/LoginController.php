@@ -30,7 +30,13 @@ class LoginController extends Controller
                     case 1:
                         return redirect()->route('home');
                     case 2:
-                        return redirect()->route('home');
+                        return redirect()->route('home'); //admin
+                    case 3:
+                        return redirect()->route('pay.index'); //cajero
+                    case 4:
+                        return redirect()->route('kitchen.index'); //cocinero
+                    case 5:
+                        return redirect()->route('hall');
                     default:
                         return redirect()->route('hall');
                 }

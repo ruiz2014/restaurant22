@@ -21,7 +21,7 @@
                                 <img src="{{ asset('img/logo/logo1.jpg') }}" alt="">
                             </div>
                         </div>
-                        <form class="col m12 l6" method="POST" action="{{ route('login') }}" name="login">
+                        <form class="col m12 l6" method="POST" action="{{ route('auth.login') }}" name="login">
                         @csrf
                             <div class="form-group">
                                 <label for="exampleInputEmail1">Usuario</label>

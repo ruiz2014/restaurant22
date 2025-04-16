@@ -19,56 +19,56 @@
         </div>
     @endif
         <div class="col-md-3">
-        <div class="panel invoice-list">
-        <div class="list-group animate__animated animate__fadeInLeft">
-        <a href="#" class="list-group-item list-group-item-action active">
-            <div class="d-flex w-100 justify-content-between">
-            <h5 class="mb-1">{{ $attention->voucher->name }} </h5>
-            <!-- <small>3 days ago</small> -->
-            </div>
-            <p class="amount mb-0">{{ $attention->identifier }}</p>
-            <!-- <div>Concepto de la factura.</div> -->
-        </a>
-        <a href="#" class="list-group-item list-group-item-action">
-            <div class="d-flex w-100 justify-content-between">
-            <h5 class="mb-1">{{ $attention->customer->name }}</h5>
-            <!-- <small class="text-muted">3 days ago</small> -->
-            </div>
-            <p class="amount mb-1">Forma de Pago</p>
-            <div class="text-muted">Contado.</div>
+            <div class="panel invoice-list">
+                <div class="list-group animate__animated animate__fadeInLeft">
+                <a href="#" class="list-group-item list-group-item-action active">
+                    <div class="d-flex w-100 justify-content-between">
+                    <h5 class="mb-1">{{ $attention->voucher->name }} </h5>
+                    <!-- <small>3 days ago</small> -->
+                    </div>
+                    <p class="amount mb-0">{{ $attention->identifier }}</p>
+                    <!-- <div>Concepto de la factura.</div> -->
+                </a>
+                <a href="#" class="list-group-item list-group-item-action">
+                    <div class="d-flex w-100 justify-content-between">
+                    <h5 class="mb-1">{{ $attention->customer->name }}</h5>
+                    <!-- <small class="text-muted">3 days ago</small> -->
+                    </div>
+                    <p class="amount mb-1">Forma de Pago</p>
+                    <div class="text-muted">Contado.</div>
 
-            <p class="amount mb-1 mt-2">Medio de Pago</p>
+                    <p class="amount mb-1 mt-2">Medio de Pago</p>
 
-            @foreach($methods as $method)
-            <div class="d-flex w-100 justify-content-between">
-                <div class="text-muted">{{ $method->name }}</div>
-                <div class="d-flex w-25 justify-content-between">
-                    <small class="text-muted">S/.</small> <small>{{ $method->total }}</small>
+                    @foreach($methods as $method)
+                    <div class="d-flex w-100 justify-content-between">
+                        <div class="text-muted">{{ $method->name }}</div>
+                        <div class="d-flex w-25 justify-content-between">
+                            <small class="text-muted">S/.</small> <small>{{ $method->total }}</small>
+                        </div>
+                    </div>
+                    @endforeach
+                    <div class="d-flex w-100 mt-2 justify-content-between" style="border-top: 2px solid #b9b6b6;">
+                        <h5 class="mb-1 mt-1">Total</h5>
+                        <div class="d-flex w-25 justify-content-between mt-1">
+                        <span>S/.</span><span>{{ $total }}</span>
+                        </div>
+                    </div>
+                    <p class="amount mb-1 mt-2">Observaciones</p>
+                    <!-- <div class="text-muted">Donec id elit non mi porta.</div> -->
+                </a>
+                <!-- <a href="#" class="list-group-item list-group-item-action">
+                    <div class="d-flex w-100 justify-content-between">
+                    <h5 class="mb-1">Nombre de cliente</h5>
+                    <small class="text-muted">3 days ago</small>
+                    </div>
+                    <p class="amount mb-1">1200€</p>
+                    <div class="text-muted">Donec id elit non mi porta.</div>
+                </a> -->
                 </div>
             </div>
-            @endforeach
-            <div class="d-flex w-100 mt-2 justify-content-between" style="border-top: 2px solid #b9b6b6;">
-                <h5 class="mb-1 mt-1">Total</h5>
-                <div class="d-flex w-25 justify-content-between mt-1">
-                <span>S/.</span><span>{{ $total }}</span>
-                </div>
-            </div>
-            <p class="amount mb-1 mt-2">Observaciones</p>
-            <!-- <div class="text-muted">Donec id elit non mi porta.</div> -->
-        </a>
-        <!-- <a href="#" class="list-group-item list-group-item-action">
-            <div class="d-flex w-100 justify-content-between">
-            <h5 class="mb-1">Nombre de cliente</h5>
-            <small class="text-muted">3 days ago</small>
-            </div>
-            <p class="amount mb-1">1200€</p>
-            <div class="text-muted">Donec id elit non mi porta.</div>
-        </a> -->
-        </div>
-    </div>
         </div>
         <div class="col-md-9">
-        <div class="card animate__animated animate__fadeIn">
+            <div class="card animate__animated animate__fadeIn">
                 <div class="card-header">
                     Fecha :
                     <strong>{{ date('d-m-Y', strtotime($attention->created_at))  }}</strong>
@@ -174,9 +174,6 @@
         </div>
     </div>
 
-
-
-
     <div class="footer container-fluid mt-3 bg-light">
         <div class="row">
             <div class="col footer-app">&copy; Todos los derechos reservados · <span class="brand-name"></span></div>
@@ -203,3 +200,28 @@
 }
 </style>    
 @endsection
+@push('scripts')
+    @if($notify == 0)
+        <script type="module"> 
+
+            import { io } from "https://cdn.socket.io/4.7.5/socket.io.esm.min.js";
+            // const socket = io('https://chapi.nafer.com.pe');
+            const socket = io('http://localhost:3000');
+
+            let table = {{ $table }};
+            socket.emit('cashier', table);
+            setTimeout(function(){
+                window.location.href = "{{ route('pay.index') }}";
+            }, 10000);
+            // setInterval(function(){ location.reload(); }, 4000);
+
+            // socket.on('cashier', (msg)=>{
+            //     // alert("A caja")
+            //     notify("Llego una nueva orden para generar su voucher...");
+            //     // alert("Llego una nueva orden para generar su voucher...")
+            //     setInterval(function(){ location.reload(); }, 4000);
+            //     // location.reload();
+            // })
+        </script>   
+    @endif 
+@endpush  

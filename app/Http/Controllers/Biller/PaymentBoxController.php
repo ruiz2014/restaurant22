@@ -25,7 +25,8 @@ use Greenter\Model\Sale\Legend;
 use Greenter\Model\Summary\Summary;
 use Greenter\Model\Summary\SummaryDetail;
 
-
+// use Illuminate\Routing\Route;
+use Illuminate\Support\Facades\URL;
 // use Greenter\Ws\Services\SunatEndpoints;
 use App\Http\Controllers\NumeroALetras;
 
@@ -632,6 +633,17 @@ class PaymentBoxController extends Controller
     }
 
     public function generatedReceipt(Request $request, $order){
+        $notify = 0;
+        // $uri = $request->path();
+        $previousURL= url()->previous();
+        // $baja = str_replace(url('/'), '', url()->previous());
+        // $otro = parse_url(url()->previous(), PHP_URL_PATH);
+        // $previous_Route_Name = app('router')->getRoutes()->match(app('request')->create(URL::previous()))->getName();
+        // if($request->is('admin/attentions/*')){
+        if(strpos($previousURL, "admin/attentions/") !== false) {
+            $notify = 1;
+        }
+
         $attention = Attention::find($order);
         $company = Company::find(1);
         $temps = Temp_Order::where('code', $attention->document_code)->get();
@@ -640,9 +652,11 @@ class PaymentBoxController extends Controller
                                 ->where('at.document_code', $attention->document_code)
                                 ->select('pl.total', 'payment_methods.name')
                                 ->get();
-                                // dd($methods);                     
+                  
+        $table = $temps->value("table_id");
         $payment_methods = PaymentMethod::all();
+        // dd($table, $temps, $attention);  
         $total = Temp_Order::where('code', $attention->document_code)->sum(DB::raw('amount * price'));
-        return view('cash_register.generated_receipt', compact('company', 'attention', 'total', 'payment_methods', 'temps', 'methods'));
+        return view('cash_register.generated_receipt', compact('notify', 'company', 'attention', 'table', 'total', 'payment_methods', 'temps', 'methods'));
     }
 }

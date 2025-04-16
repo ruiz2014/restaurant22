@@ -56,6 +56,7 @@ class KitchenController extends Controller
         $resp = Temp_order::select("ta.identifier", "ro.name as room" ) //DB::raw("CAST(to.created_at AS TIME) as time")                  
                             ->join("tables as ta", "ta.id", "=", "temp_orders.table_id")
                             ->join("rooms as ro", "ro.id", "=", "ta.room_id")
+                            ->where("temp_orders.id", $req->id)
                             ->first();
         $orders =[];
         return response()->json(['ok' => 1, 'id'=>$req->id, 'message' => 'Plato para el '.$resp->room.' la mesa '.$resp->identifier.' esta listo']);

@@ -40,68 +40,79 @@ Route::get('/', function () {
 })->name('login')->middleware('guest');
 
 // Route::view('login', 'auth.login')->middleware('guest');
-Route::post('/login', [LoginController::class, 'login'])->name('login');
+Route::post('/login', [LoginController::class, 'login'])->name('auth.login');
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
 // Route::view('inicio', 'inicio')->name('inicio')->middleware('auth');
 // Route::view('admin', 'admin')->name('admin')->middleware('auth');
-Route::get('panel', [HomeController::class, 'index'])->name('home');
+
 Route::prefix('admin')->group(function () {
-    Route::get('products/list_delete', [ProductController::class, 'listDelete'])->name('products.deleted');
-    Route::post('products/{id}/restore', [ProductController::class, 'restore'])->name('products.restore');
-    Route::resource('products', ProductController::class);
-    Route::resource('customers', CustomerController::class);
-    Route::resource('providers', ProviderController::class);
-    Route::get('categories/list_delete', [CategoryController::class, 'listDelete'])->name('categories.deleted');
-    Route::post('categories/{id}/restore', [CategoryController::class, 'restore'])->name('categories.restore');
-    Route::resource('categories', CategoryController::class);
 
-    Route::get('salas', [RoomController::class, 'index'])->name('room.index');
-    Route::get('salas/create', [RoomController::class, 'create'])->name('room.create');
-    Route::post('salas', [RoomController::class, 'store'])->name('room.store');
-    Route::get('salas/{room}/edit', [RoomController::class, 'edit'])->name('room.edit');
-    Route::post('salas/{room}', [RoomController::class, 'update'])->name('room.update');
+    Route::middleware(['auth', 'admin'])->group(function () {
+        Route::get('panel', [HomeController::class, 'index'])->name('home');
+        Route::get('products/list_delete', [ProductController::class, 'listDelete'])->name('products.deleted');
+        Route::post('products/{id}/restore', [ProductController::class, 'restore'])->name('products.restore');
+        Route::resource('products', ProductController::class);
 
-    Route::resource('salas', RoomController::class)->parameters(['salas'=>'room'])->names('room');
-    Route::resource('tables', TableController::class);
-    Route::resource('payment_methods', PaymentMethodController::class);
-    Route::resource('vouchers', VoucherController::class);
+        Route::get('categories/list_delete', [CategoryController::class, 'listDelete'])->name('categories.deleted');
+        Route::post('categories/{id}/restore', [CategoryController::class, 'restore'])->name('categories.restore');
+        Route::resource('categories', CategoryController::class);
 
-    Route::get('caja', [PaymentBoxController::class, 'index'])->name('pay.index');
-    Route::get('caja/pago/{order}', [PaymentBoxController::class, 'show'])->name('pay.show');
-    Route::post('caja/pago/enviar', [PaymentBoxController::class, 'store'])->name('pay.store');
-    Route::get('caja/generado/{order}', [PaymentBoxController::class, 'generatedReceipt'])->name('pay.generated');
+        Route::resource('providers', ProviderController::class);
 
-    Route::get('user/register', [RegisterController::class, 'create'])->name('formRegistro');
-    Route::post('user/register', [RegisterController::class, 'store'])->name('register.store');
-    Route::get('user/editPassword/{id}', [RegisterController::class, 'editPassword'])->name('formEdit');
-    Route::post('user/updatePassword/{id}', [RegisterController::class, 'updatePassword'])->name('register.update');
-    Route::resource('users', App\Http\Controllers\Admin\UserController::class);
-
-    Route::resource('roles', RoleController::class);
-    Route::get('attentions/{type}', [AttentionController::class, 'index'])->name('attentions.index');
-    Route::get('summary', [SummaryController::class, 'index'])->name('summary.index');
-    Route::post('summary/search', [SummaryController::class, 'search'])->name('summary.search');  
-    Route::post('summary/action', [SummaryController::class, 'summary'])->name('summary');  
+        Route::resource('salas', RoomController::class)->parameters(['salas'=>'room'])->names('room');
+        Route::resource('tables', TableController::class);
+        
+        Route::get('user/register', [RegisterController::class, 'create'])->name('formRegistro');
+        Route::post('user/register', [RegisterController::class, 'store'])->name('register.store');
+        Route::get('user/editPassword/{id}', [RegisterController::class, 'editPassword'])->name('formEdit');
+        Route::post('user/updatePassword/{id}', [RegisterController::class, 'updatePassword'])->name('register.update');
+        Route::resource('users', App\Http\Controllers\Admin\UserController::class);
+    });
     
+    Route::middleware(['auth', 'role:1,2,3'])->group(function(){
+        Route::resource('customers', CustomerController::class);
+        Route::get('caja', [PaymentBoxController::class, 'index'])->name('pay.index');
+        Route::get('caja/pago/{order}', [PaymentBoxController::class, 'show'])->name('pay.show');
+        Route::post('caja/pago/enviar', [PaymentBoxController::class, 'store'])->name('pay.store');
+        Route::get('caja/generado/{order}', [PaymentBoxController::class, 'generatedReceipt'])->name('pay.generated');
+
+        Route::get('attentions/{type}', [AttentionController::class, 'index'])->name('attentions.index');
+        Route::get('summary', [SummaryController::class, 'index'])->name('summary.index');
+        Route::post('summary/search', [SummaryController::class, 'search'])->name('summary.search');  
+        Route::post('summary/action', [SummaryController::class, 'summary'])->name('summary'); 
+    });
+    
+    // Route::get('salas', [RoomController::class, 'index'])->name('room.index');
+    // Route::get('salas/create', [RoomController::class, 'create'])->name('room.create');
+    // Route::post('salas', [RoomController::class, 'store'])->name('room.store');
+    // Route::get('salas/{room}/edit', [RoomController::class, 'edit'])->name('room.edit');
+    // Route::post('salas/{room}', [RoomController::class, 'update'])->name('room.update');
+    Route::middleware(['auth', 'role:1'])->group(function(){
+        Route::resource('vouchers', VoucherController::class);
+        Route::resource('roles', RoleController::class);
+        Route::resource('payment_methods', PaymentMethodController::class);
+    });
 });
 
-Route::get('salon', [DiningHallController::class, 'hall'])->name('hall');
+Route::middleware(['auth', 'role:1,2,5'])->group(function(){
+    Route::get('salon', [DiningHallController::class, 'hall'])->name('hall')->withoutMiddleware('role:1,2,5');
 
-Route::post('check', [DiningHallController::class, 'check']);
-Route::post('add_order', [DiningHallController::class, 'addOrder']);
-Route::post('modify_amount', [DiningHallController::class, 'modifyAmount']);
-Route::post('delete_order', [DiningHallController::class, 'deleteOrder']);
-Route::post('add_note', [DiningHallController::class, 'addNote']);
-Route::post('send_kitchen', [DiningHallController::class, 'sendToKitchen']);
-Route::post('qr_debt', [DiningHallController::class, 'qrDebt']);
-Route::get('see_debt/{code}/{type}', [DiningHallController::class, 'seeDebt']);
-// Route::get('pdf_debt/{code}', [DiningHallController::class, 'pdfDebt']);
-Route::post('finalize_order', [DiningHallController::class, 'finalizeOrder'])->name('finalizeOrder');
+    Route::post('check', [DiningHallController::class, 'check']);
+    Route::post('add_order', [DiningHallController::class, 'addOrder']);
+    Route::post('modify_amount', [DiningHallController::class, 'modifyAmount']);
+    Route::post('delete_order', [DiningHallController::class, 'deleteOrder']);
+    Route::post('add_note', [DiningHallController::class, 'addNote']);
+    Route::post('send_kitchen', [DiningHallController::class, 'sendToKitchen']);
+    Route::post('qr_debt', [DiningHallController::class, 'qrDebt']);
+    Route::get('see_debt/{code}/{type}', [DiningHallController::class, 'seeDebt']);
+    // Route::get('pdf_debt/{code}', [DiningHallController::class, 'pdfDebt']);
+    Route::post('finalize_order', [DiningHallController::class, 'finalizeOrder'])->name('finalizeOrder');
+});
 
 
 Route::post('dish_ready', [KitchenController::class, 'dishReady']);
-Route::get('kitchen', [KitchenController::class, 'index']);
+Route::get('kitchen', [KitchenController::class, 'index'])->name('kitchen.index');
 
 
 /***************************  TOOLS  *****************************/
