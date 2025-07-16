@@ -35,6 +35,12 @@
                     @endif
 
                     <div class="card-body bg-white">
+                        <div class="row">
+                            <form class="d-flex" role="search" action="{{ route('products.index') }}" method="get">
+                                <input class="form-control me-2" name="search" type="search" value="{{ $search }}" placeholder="Buscar" aria-label="Buscar">
+                                <button class="btn btn-outline-success" type="submit"><ion-icon name="search"></ion-icon></button>
+                            </form>
+                        </div>
                         <div class="table-responsive">
                             <table class="table table-striped table-hover">
                                 <thead class="thead">
@@ -56,16 +62,16 @@
                                         <td >{{ $product->name }}</td>
                                         <td >{{ $product->description }}</td>
                                         <td >{{ $product->price }}</td>
-                                        <td >{{ isset($product->category->name) ?  $product->category->name : ''}}</td>
+                                        <td >{{ $product->category }}</td>
                                         <td >{{ $product->stock }}</td>
                                         <td >{{ $product->minimo }}</td>
                                         <td>
                                             <form action="{{ route('products.destroy', $product->id) }}" method="POST">
-                                                <a class="btn btn-sm btn-primary " href="{{ route('products.show', $product->id) }}"><i class="fa fa-fw fa-eye"></i> {{ __('Show') }}</a>
-                                                <a class="btn btn-sm btn-success" href="{{ route('products.edit', $product->id) }}"><i class="fa fa-fw fa-edit"></i> {{ __('Edit') }}</a>
+                                                <a class="btn btn-sm btn-primary " href="{{ route('products.show', $product->id) }}"><ion-icon name="eye"></ion-icon></a>
+                                                <a class="btn btn-sm btn-success" href="{{ route('products.edit', $product->id) }}"><ion-icon name="pencil"></ion-icon></a>
                                                 @csrf
                                                 @method('DELETE')
-                                                <button type="submit" class="btn btn-danger btn-sm" onclick="event.preventDefault(); confirm('Are you sure to delete?') ? this.closest('form').submit() : false;"><i class="fa fa-fw fa-trash"></i> {{ __('Delete') }}</button>
+                                                <button type="submit" class="btn btn-danger btn-sm" onclick="event.preventDefault(); confirm('Are you sure to delete?') ? this.closest('form').submit() : false;"><ion-icon name="trash"></ion-icon></button>
                                             </form>
                                         </td>
                                     </tr>

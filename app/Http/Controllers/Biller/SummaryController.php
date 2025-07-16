@@ -37,9 +37,16 @@ class SummaryController extends Controller
         //     $documentos = Attention::where('document_type', 3)->where(DB::raw("CAST(created_at as date)"), $fecha)->get();
         //     // dd('paso');
         // }
-        $summaries = Summ::paginate();
+        $search = $request->search;
+        $select = ['id', 'date_created', 'date_sent', 'identifier', 'hash', 'message', 'cdr'];
+        $summaries = Summ::select($select)
+                        ->Where(function($query) use ($select, $search) {
+                            foreach($select as $col){
+                                $query->orWhere($col,'LIKE',"%$search%");
+                            }
+                        })->paginate();
         // dd($summaries);
-        return view('admin.biller.summary.index', compact('summaries'))
+        return view('admin.biller.summary.index', compact('summaries', 'search'))
                     ->with('i', ($request->input('page', 1) - 1) * $summaries->perPage());
     }
 

@@ -22,6 +22,14 @@
     svg{
         width:20px;
     }
+    button ion-icon, a ion-icon{
+        /* font-size:20px; */
+        position: relative;
+        top: 2px;
+    }
+    input[name="search"] ~ button ion-icon {
+        padding: 0px 20px;
+    }
 </style>
 
 </head>
@@ -134,6 +142,7 @@
     <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
     <!-- <script src="https://code.jquery.com/ui/1.13.3/jquery-ui.js"></script> -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/ionicons@latest/dist/ionicons.js"></script>
     <!-- <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js" integrity="sha384-oBqDVmMz9ATKxIep9tiCxS/Z9fNfEXiDAYTujMAeBAsjFuCZSmKbSSUnQlmh/jp3" crossorigin="anonymous"></script> -->
     @stack('scripts')
     @yield('script')

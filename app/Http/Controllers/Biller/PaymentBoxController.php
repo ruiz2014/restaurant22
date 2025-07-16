@@ -659,4 +659,10 @@ class PaymentBoxController extends Controller
         $total = Temp_Order::where('code', $attention->document_code)->sum(DB::raw('amount * price'));
         return view('cash_register.generated_receipt', compact('notify', 'company', 'attention', 'table', 'total', 'payment_methods', 'temps', 'methods'));
     }
+    // https://www.eporner.com/video-K8zAMCk018d/ada-wong-2-3/
+    // https://www.eporner.com/video-ojT1WxdbvFI/young-aunt-fuck-nephew-vam/
+    // https://www.eporner.com/video-6vvYu3yfhRk/vam-3d-diary-of-an-obscene-wife-iii/
+    // https://www.eporner.com/video-3OdUcqnFqgz/vam-3d-fyronyx-bar-membership/
+
+    // https://forum.allporncomix.com/threads/various-artists-mixed-3d-animated-topic-and-discussions.1024/page-30
 }

@@ -11,14 +11,14 @@
                 <form action="{{ route('summary.search') }}" method="POST">
                     @csrf    
                     <div class="form-group">
-                            <label class="form-label-2">Date:</label>
+                            <label class="form-label-2">Fecha :</label>
                             <div class="input-group date" id="">
                                 <input type="date" id="date" name="date" class="form-control-2"  />
                             </div>
                         </div>
                     <div class="card-footer mt-3 mb-4">
                         <button type="button" class="btn btn-primary modal-date" >
-                        Launch demo modal
+                        Buscar Documentos
                         </button>
                     </div>
                 </form>
@@ -31,14 +31,8 @@
                         <div style="display: flex; justify-content: space-between; align-items: center;">
 
                             <span id="card_title">
-                                {{ __('Categories') }}
+                                {{ __('Summaries') }}
                             </span>
-
-                             <div class="float-right">
-                                <a href="{{ route('categories.create') }}" class="btn btn-primary btn-sm float-right"  data-placement="left">
-                                  {{ __('Create New') }}
-                                </a>
-                              </div>
                         </div>
                     </div>
                     @if ($message = Session::get('success'))
@@ -48,6 +42,12 @@
                     @endif
 
                     <div class="card-body bg-white">
+                        <div class="row">
+                            <form class="d-flex" role="search" action="{{ route('summary.index') }}" method="get">
+                                <input class="form-control me-2" name="search" type="search" value="{{ $search }}" placeholder="Buscar" aria-label="Buscar">
+                                <button class="btn btn-outline-success" type="submit"><ion-icon name="search"></ion-icon></button>
+                            </form>
+                        </div>
                         <div class="table-responsive">
                             <table class="table table-striped table-hover">
                                 <thead class="thead">
@@ -55,10 +55,10 @@
                                         <td>Id</td>
                                         <td>F. Creacion</td>
                                         <td>F. Envio</td>
+                                        <td>Identificador</td>
                                         <td class="hidden-column-1000">hash</td>
                                         <td>Estado</td>
                                         <td class="hidden-column-700">Codigo</td>
-                                        <td></td>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -66,11 +66,11 @@
                                     <tr>
                                         <td>{{ $summary->id }}</td>
                                         <td>{{ $summary->date_created }}</td>
-                                        <td>{{ $summary->date_send}}</td>
+                                        <td>{{ $summary->date_sent}}</td>
+                                        <td>{{ $summary->identifier}}</td>
                                         <td>{{ $summary->hash }}</td>
-                                        <td>{{ $summary->status }}</td>
+                                        <td>{{ $summary->message }}</td>
                                         <td>{{ $summary->cdr }}</td>
-                                        <td>{{ $summary->ticket }}</td>
                                     </tr>
                                 @endforeach        
                                 </tbody>

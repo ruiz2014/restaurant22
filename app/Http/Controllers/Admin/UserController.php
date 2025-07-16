@@ -19,9 +19,19 @@ class UserController extends Controller
      */
     public function index(Request $request)
     {
-        $users = User::all()->skip(1);
+        $search = $request->search;
+        $select = ['users.id', 'users.name', 'users.email', 'r.name', 'e.dni', 'e.phone'];
+        $users = User::select('users.id', 'users.name', 'users.email', 'r.name as rol', 'e.dni', 'e.phone')
+            ->join('roles as r', 'r.id', '=', 'users.rol')
+            ->join('employees as e', 'e.user_id', '=', 'users.id')
+            ->Where(function($query) use ($select, $search) {
+                foreach($select as $col){
+                    $query->orWhere($col,'LIKE',"%$search%");
+                }
+            })->paginate(); 
+       
         // dd(auth()->user(), auth()->user()->name, auth()->id());
-        return view('admin.user.index', compact('users'));
+        return view('admin.user.index', compact('users', 'search'));
     }
 
     /**

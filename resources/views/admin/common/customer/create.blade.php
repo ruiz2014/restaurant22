@@ -11,7 +11,7 @@
 
                 <div class="card card-default">
                     <div class="card-header">
-                        <span class="card-title">{{ __('Create') }} Customer</span>
+                        <span class="card-title">{{ __('Create') }} {{ __('Customer') }}</span>
                     </div>
                     <div class="card-body bg-white">
                         <form id="customer_form" method="POST" action="{{ route('customers.store') }}"  role="form" enctype="multipart/form-data">

@@ -20,10 +20,20 @@ class ProductController extends Controller
      */
     public function index(Request $request): View
     {
-        $products = Product::paginate();
+        $search = $request->search;
+        $select = ['products.id', 'products.name', 'products.description', 'products.price', 'products.stock', 'products.minimo', 'c.name'];
+        
+        $products = Product::select('products.id', 'products.name', 'products.description', 'products.price', 'products.stock', 'products.minimo', 'c.name as category')
+                    ->join('categories as c', 'c.id', '=', 'products.category_id')
+                    ->Where(function($query) use ($select, $search) {
+                        foreach($select as $col){
+                            $query->orWhere($col,'LIKE',"%$search%");
+                        }
+                    })->paginate();
+
         $deleted = Product::onlyTrashed()->value('id');
 
-        return view('admin.common.product.index', compact('products', 'deleted'))
+        return view('admin.common.product.index', compact('products', 'deleted', 'search'))
             ->with('i', ($request->input('page', 1) - 1) * $products->perPage());
     }
 

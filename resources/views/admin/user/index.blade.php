@@ -30,6 +30,12 @@
                     @endif
 
                     <div class="card-body bg-white">
+                        <div class="row">
+                                <form class="d-flex" role="search" action="{{route('users.index')}}" method="get">
+                                    <input class="form-control me-2" name="search" type="search" value="{{ $search }}" placeholder="Buscar" aria-label="Buscar">
+                                    <button class="btn btn-outline-success" type="submit"><ion-icon name="search"></ion-icon></button>
+                                </form>
+                            </div>
                         <div class="table-responsive">
                             <table class="table table-striped table-hover" id="myTable">
                                 <thead class="thead">
@@ -46,15 +52,13 @@
                                     @foreach ($users as $user)
                                         <tr>  
                                             <td >{{ $user->name }}</td>
-                                            <td >
-                                                {{ isset($user->role->name) ? $user->role->name : ''}}
-                                            </td>
+                                            <td >{{ $user->rol }}</td>
                                             <td >{{ $user->email }}</td>
-                                            <td >{{ isset($user->employee->dni) ? $user->employee->dni : '' }}</td>
-                                            <td >{{ isset($user->employee->phone) ? $user->employee->phone : '' }}</td>
+                                            <td >{{ $user->dni }}</td>
+                                            <td >{{ $user->phone }}</td>
                                             <td>
-                                                <a class="btn btn-sm btn-primary " href="{{ route('users.show', $user->id) }}"><i class="fa fa-fw fa-eye"></i> {{ __('Show') }}</a>
-                                                <a class="btn btn-sm btn-success" href="{{ route('users.edit', $user->id) }}"><i class="fa fa-fw fa-edit"></i> {{ __('Edit') }}</a>
+                                                <a class="btn btn-sm btn-primary " href="{{ route('users.show', $user->id) }}"><ion-icon name="eye"></ion-icon></a>
+                                                <a class="btn btn-sm btn-success" href="{{ route('users.edit', $user->id) }}"><ion-icon name="pencil"></ion-icon></a>
                                             </td>
                                         </tr>
                                     @endforeach

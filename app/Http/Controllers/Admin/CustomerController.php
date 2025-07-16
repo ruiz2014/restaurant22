@@ -17,9 +17,18 @@ class CustomerController extends Controller
      */
     public function index(Request $request): View
     {
-        $customers = Customer::paginate();
+        $search = $request->search;
+        $select = ['customers.id', 'customers.name', 'customers.document', 'ci.name_doc', 'customers.phone', 'customers.address'];
 
-        return view('admin.common.customer.index', compact('customers'))
+        $customers = Customer::select($select)
+                    ->join('customer_identities as ci', 'ci.code' , '=', 'customers.tipo_doc')
+                    ->Where(function($query) use ($select, $search) {
+                        foreach($select as $col){
+                            $query->orWhere($col,'LIKE',"%$search%");
+                        }
+                    })->paginate();
+
+        return view('admin.common.customer.index', compact('customers', 'search'))
             ->with('i', ($request->input('page', 1) - 1) * $customers->perPage());
     }
 

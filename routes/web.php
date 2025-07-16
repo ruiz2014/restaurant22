@@ -15,6 +15,7 @@ use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\HomeController;
 use App\Http\Controllers\Biller\PaymentBoxController;
 use App\Http\Controllers\Admin\RoomController;
+use App\Http\Controllers\TableController;
 use App\Http\Controllers\Admin\PaymentMethodController;
 use App\Http\Controllers\Tool\ToolController;
 use App\Http\Controllers\Biller\AttentionController;
@@ -110,10 +111,10 @@ Route::middleware(['auth', 'role:1,2,5'])->group(function(){
     Route::post('finalize_order', [DiningHallController::class, 'finalizeOrder'])->name('finalizeOrder');
 });
 
-
-Route::post('dish_ready', [KitchenController::class, 'dishReady']);
-Route::get('kitchen', [KitchenController::class, 'index'])->name('kitchen.index');
-
+Route::middleware(['auth', 'role:1,2,4'])->group(function(){
+    Route::post('dish_ready', [KitchenController::class, 'dishReady']);
+    Route::get('kitchen', [KitchenController::class, 'index'])->name('kitchen.index');
+});
 
 /***************************  TOOLS  *****************************/
 Route::get('tool/search', [ToolController::class, 'search']);

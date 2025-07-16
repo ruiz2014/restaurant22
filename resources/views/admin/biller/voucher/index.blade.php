@@ -13,14 +13,8 @@
                         <div style="display: flex; justify-content: space-between; align-items: center;">
 
                             <span id="card_title">
-                                {{ __('Voucher') }}
+                                {{ $title }}
                             </span>
-
-                             <div class="float-right">
-                                <a href="{{ route('products.create') }}" class="btn btn-primary btn-sm float-right"  data-placement="left">
-                                  {{ __('Create New') }}
-                                </a>
-                              </div>
                         </div>
                     </div>
                     @if ($message = Session::get('success'))
@@ -30,6 +24,12 @@
                     @endif
 
                     <div class="card-body bg-white">
+                        <div class="row">
+                            <form class="d-flex" role="search" action="{{route('attentions.index', ['type'=>'00'])}}" method="get">
+                                <input class="form-control me-2" name="search" type="search" value="{{ $search }}" placeholder="Buscar" aria-label="Buscar">
+                                <button class="btn btn-outline-success" type="submit"><ion-icon name="search"></ion-icon></button>
+                            </form>
+                        </div>
                         <div class="table-responsive">
                             <table class="table table-striped table-hover">
                                 <thead class="thead">
@@ -47,20 +47,16 @@
                                 @foreach ($types as $type)
                                     <tr>   
                                         <td >{{ $type->identifier }}</td>
-                                        <td >{{ $type->customer->name }}</td>
+                                        <td >{{ $type->name }}</td>
                                         <td >{{ $type->total }}</td>
                                         <td >{{ $type->created_at}}</td>
                                         <td >{{ $type->cdr }}</td>
                                         <td >{{ $type->success }}</td>
                                         <td>
-                                            <form action=" route('products.destroy', $product->id) }}" method="POST">
-                                                <a class="btn btn-sm btn-primary " href="{{ route('pay.generated', $type->id) }}"><i class="fa fa-fw fa-eye"></i> {{ __('Show') }}</a>
-                                                <a class="btn btn-sm btn-success" href=" route('products.edit', $product->id) }}"><i class="fa fa-fw fa-edit"></i> {{ __('Edit') }}</a>
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" class="btn btn-danger btn-sm" onclick="event.preventDefault(); confirm('Are you sure to delete?') ? this.closest('form').submit() : false;"><i class="fa fa-fw fa-trash"></i> {{ __('Delete') }}</button>
-                                            </form>
+                                            <a class="btn btn-primary " href="{{ route('pay.generated', $type->id) }}"><ion-icon name="eye"></ion-icon></a>
                                         </td>
+                                        <!-- <ion-icon name="pencil"></ion-icon>
+                                        <ion-icon name="trash"></ion-icon> -->
                                     </tr>
                                 @endforeach
                                 </tbody>
@@ -68,7 +64,7 @@
                         </div>
                     </div>
                 </div>
-                <!-- types->withQueryString()->links() !!} -->
+             {!! $types->withQueryString()->links() !!}
             </div>
         </div>
     </div>
